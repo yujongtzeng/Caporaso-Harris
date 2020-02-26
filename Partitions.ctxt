@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.target=Partitions
+comment0.text=\n\ The\ Partitions\ class\ generates\ all\ partitions\ of\ length\ less\ or\ equal\ to\ \n\ maxLength\ of\ positive\ integers\ less\ or\ equal\ to\ n.\ Partitions\ are\ written\n\ in\ the\ way\ in\ Caporaso-Harris'\ paper.\ i.e.\ if\ n\ \=\ a1*1\ +\ a2*2\ +\ ....\ is\ a\ \n\ partition\ of\ n,\ then\ this\ partitions\ is\ recoreded\ as\ (a1,\ a2,\ ....).\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @since\ August\ 27,\ 2019\n\ @version\ 1.1\n
+comment1.params=n\ maxLength
+comment1.target=Partitions(int,\ int)
+comment1.text=\n\ Constructor\ for\ objects\ of\ class\ Partitions\n\ \n\ @param\ n\ the\ upper\ bound\ for\ the\ integers\ we\ are\ going\ to\ find\ \n\ their\ partions.\n\ @param\ maxLength\ the\ max\ length\ of\ the\ partitions.\n
+comment2.params=k
+comment2.target=get(int)
+comment2.text=\n\ Return\ the\ all\ partitions\ of\ the\ input\ number.\ \n\ @param\ k\ Any\ integer\n\ @return\ All\ partitions\ of\ this\ number.\ \n
+comment3.params=
+comment3.target=void\ print()
+comment3.text=\n\ Print\ all\ partitions\ generated\ in\ the\ object.\ \ \n
+comment4.params=array\ index
+comment4.target=int\ I(byte[],\ int)
+comment4.text=\n\ Find\ the\ current\ weighted\ sum\ of\ elements\ in\ array.\ \n
+numComments=5

@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=test
+comment0.text=\n\ Set\ printLast\ to\ d\ in\ CH\ and\ a+1\ in\ F0table.\n
+comment1.params=args
+comment1.target=void\ main(java.lang.String[])
+comment2.params=maxdegree\ delta\ testN
+comment2.target=void\ testCH(int,\ int,\ int)
+comment3.params=file1\ file2
+comment3.target=void\ compare(java.io.File,\ java.io.File)
+comment3.text=private\ static\ void\ testF0(int\ a,\ int\ b,\ int\ delta,\ int\ testN)\ {\n\ \ \ \ \ \ \ \ F0table\ f0\ \=\ new\ F0table(a,\ b,\ delta);\n\ \ \ \ \ \ \ \ f0.compute();\ \ \ \ \ \n\ \ \ \ \ \ \ \ for\ (int\ i\ \=\ 0;\ i\ <\=\ a;\ i++)\ {\n\ \ \ \ \ \ \ \ \ \ \ \ for\ (int\ r\ \=\ 0;\ r\ <\=\ delta;\ r++)\ {\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ g\ \=\ MyF.g_a(i,\ b)\ -\ r;\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ fname\ \=\ "O("+\ i\ +\ ",\ "\ +\ b\ +\ ")_g\="\ +\ g\ +\ ".txt";\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.println(fname);\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ compare(new\ File("test/F0"\ +\ testN\ +"/"\ +\ fname),\ new\ File("output/F0/"\ +\ fname));\n\ \ \ \ \ \ \ \ \ \ \ \ }\n\ \ \ \ \ \ \ \ }\n}
+numComments=4

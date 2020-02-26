@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=Complexity
+comment1.params=deg
+comment1.target=void\ calculate(int)
+comment2.params=d\ r\ alpha\ beta
+comment2.target=void\ N(int,\ int,\ byte[],\ byte[])
+comment3.params=deg
+comment3.target=double\ eP(int)
+comment4.params=deg
+comment4.target=double\ eNum(int)
+comment5.params=deg
+comment5.target=double\ eSpace(int)
+comment6.params=deg
+comment6.target=double\ eTime(int)
+comment7.params=deg
+comment7.target=double\ naive(int)
+numComments=8

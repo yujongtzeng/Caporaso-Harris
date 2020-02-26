@@ -1,0 +1,24 @@
+#BlueJ class context
+comment0.target=MyF
+comment0.text=\n\ MyF\ is\ a\ class\ which\ contains\ short\ misc\ functions.\ \n\n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.0\n\ @since\ August\ 27,\ 2019.\n
+comment1.params=arr
+comment1.target=java.lang.String\ toVar(byte[])
+comment1.text=\n\ Convert\ the\ input\ array\ to\ a\ monomial\ "b^(a0)\ c^(a1)\ d^(a2)...."\ \n\ The\ elements\ of\ the\ input\ array\ is\ the\ power\ of\ b,\ c,\ d,...,z.\ \ \n\ For\ example,\ if\ arr\ \=\ [1,\ 3,\ 0,\ 4]\ then\ output\ \=\ "b^1\ c^3\ e^4".\n\ Only\ the\ first\ 25\ elements\ will\ be\ used,\ if\ the\ length\ of\ input\ \n\ is\ greater.\ \n\ @param\ arr\ An\ integer\ array\ \n\ @return\ The\ string\ of\ correponding\ monomial.\n
+comment2.params=arr
+comment2.target=java.lang.String\ str(byte[])
+comment2.text=\ \n\ Return\ the\ string\ representation\ of\ an\ array\ (seperated\ by\ ","\ ).\ \n\ @param\ arr\ An\ integer\ array\n\ @return\ String\n
+comment3.params=arr
+comment3.target=java.lang.String\ str(long[])
+comment4.params=a\ b
+comment4.target=int\ g_a(int,\ int)
+comment4.text=\n\ Return\ the\ arithmetic\ genus\ of\ the\ curve\ class\ O(a,b),\ which\ is\ \n\ (a\ -\ 1)*(b\ -\ 1).\ \n\ @param\ a\ An\ Integer\n\ @param\ b\ An\ Integer\n\ @return\ The\ integer\ (a\ -\ 1)*(b\ -\ 1)\ \n
+comment5.params=a\ b
+comment5.target=java.math.BigInteger\ add(long,\ long)
+comment6.params=a\ b
+comment6.target=java.math.BigInteger\ add(java.math.BigInteger,\ long)
+comment7.params=a\ b
+comment7.target=java.math.BigInteger\ add(long,\ java.math.BigInteger)
+comment8.params=a\ b\ c
+comment8.target=java.math.BigInteger\ prod(long,\ long,\ long)
+comment8.text=public\ static\ BigInteger\ prod(long\ a,\ long\ b,\ long\ c,\ long\ d)\ {\n\ \ \ \ \ \ \ \ BigInteger\ ans\ \=\ BigInteger.valueOf(a).multiply(BigInteger.valueOf(b));\n\ \ \ \ \ \ \ \ ans\ \=\ ans.multiply(BigInteger.valueOf(c));\n\ \ \ \ \ \ \ \ return\ ans.multiply(BigInteger.valueOf(d));\ \ \ \ \ \ \ \n}
+numComments=9
