@@ -1,14 +1,16 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 /**
- * The Partitions class generates all partitions of length less or equal to 
- * maxLength of positive integers less or equal to n. Partitions are written
- * in the way in Caporaso-Harris' paper. i.e. if n = a1*1 + a2*2 + .... is a 
- * partition of n, then this partitions is recoreded as (a1, a2, ....). 
+ * The Partitions class generates all integer partitions of nonnegative 
+ * integers less or equal to n. Partitions are written in the notations of
+ * Caporaso-Harris' paper "Counting plane curves of any genus", 
+ * i.e. if n = a_1*1 + a_2*2 + ....+ a_n*n is a partition of n, then this 
+ * partitions is recorded as (a_1, a_2, ...., a_n). 
+ * Note all partitions will have a fixed length n. 
  * 
  * @author Yu-jong Tzeng
- * @since August 27, 2019
- * @version 1.1
+ * @since March 12, 2020
+ * @version 1.2
  */
 public class Partitions
 {
@@ -16,30 +18,30 @@ public class Partitions
     private ArrayList<byte[]>[] parArray;   
     private int maxL;
     /**
-     * Constructor for objects of class Partitions
+     * Constructor for the class
      * 
-     * @param n the upper bound for the integers we are going to find 
-     * their partions.
-     * @param maxLength the max length of the partitions.
+     * @param n the upper bound of the integers for which all integer 
+     * partitions will be generated.
      */
-    public Partitions(int n, int maxLength)
+    public Partitions(int n)
     {
         parArray = new ArrayList[n + 1];
-        maxL = maxLength;
+        maxL = n;
         for (int k = 0; k <= n; k++) {
             // generate all partitions of k.            
             parArray[k] = new ArrayList<byte[]>();
-            initialize(k , new byte[maxLength], 0, parArray[k]);       
+            initialize(k , new byte[n], 0, parArray[k]);       
         }
     }
     /**
-     * Return the all partitions of the input number. 
-     * @param k Any integer
-     * @return All partitions of this number. 
+     * Return all partitions of the input number k as a byte array. 
+     * @param k Any integer with 0 <= k <= n
+     * @return All partitions of k if 0 <= k <= n. Otherwise
+     * return an empty Arraylist.
      */
     public ArrayList<byte[]> get(int k)
     {
-        if (k >= 0) { return parArray[k]; }
+        if (k >= 0 && k < parArray.length) { return parArray[k]; }
         else { return new ArrayList<byte[]>(); }
     }
     /**

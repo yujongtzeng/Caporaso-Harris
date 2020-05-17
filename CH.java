@@ -73,7 +73,7 @@ public class CH {
         arrOP = new ArrayOp(maxLength);      
         printLast = deg;
         wDeg = 10;
-        parArr = new Partitions(deg, maxLength);
+        parArr = new Partitions(deg);
         prevMap = new HashMap<>();
         curSave = new HashMap<>();
         curDump = new HashMap<>();

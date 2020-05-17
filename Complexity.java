@@ -16,12 +16,12 @@ public class Complexity
         44583, 53174, 63261, 75175, 89134, //41-45
         105558, 124754, 147273, 173525, 204226}; //46-50
     public int length = parN.length;   
-    public int[] numN = new int[length];
+    public long[] numN = new long[length];
     public long[] space = new long[length];
     public long[] time =  new long[length];
     private ArrayOp arrOP = new ArrayOp(length);  
     public long count = 0;
-    Partitions parArr = new Partitions(length, length); 
+    Partitions parArr = new Partitions(length); 
     public void calculate(int deg) {
         if (deg > length) {
             System.out.println("deg can not be greater than " + length);
@@ -54,15 +54,6 @@ public class Complexity
             }     
             time[d] = count;
         }                                 
-        int[] timed = {1, 30, 257, 915, 3000, 
-            9310, 27051, 74780, 194335, 483973, 
-            1148592, 2617798, 5749747, 12223732, 25213618};
-        int[] time4 = {1, 10, 77, 235, 634, 
-            1570, 3698, 8437, 18282, 38773, 
-            79256, 158318, 307721, 588888, 1097305, 
-            2018479, 3641194, 6482355, 11349039, 19662757, 
-            33554728, 56741220, 94743429, 156789182, 256654163, 
-            416941899, 670573783};
     }
     private void N(int d, int r, byte[] alpha, byte[] beta) {  
         count++;
@@ -77,19 +68,24 @@ public class Complexity
             }
         }                   
     }
+    //calculate the estimated partition function
     public double eP(int deg) {
         return 1.0/4/deg/sqrt(3)*exp(PI*sqrt(2.0*deg/3));
     }
+    //calculate the estimated Number of CH invariants for fixed deg, delta
     public double eNum(int deg) {
         return 1.0/48/deg*exp(2*PI*sqrt(deg/3.0));
     }
+    //calculate the estimated Space of HashMaps in CH.java
     public double eSpace(int deg) {
         return 1.0/24/deg*exp(2*PI*sqrt(deg/3.0));
     }
+    //calculate the estimated Running Time for CH.java
     public double eTime(int deg) {
         return deg*deg*deg*exp(PI*sqrt(8.0*deg/3));
     }
+    //calculate the estimated Running Time for naive CH formula (delta = 4)
     public double naive(int deg) {
-        return deg*3*exp(4*PI*sqrt(deg/3.0));
+        return deg*5*exp(4*PI*sqrt(deg/3.0))/48/48;
     }
 }

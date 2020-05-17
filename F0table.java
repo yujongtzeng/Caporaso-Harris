@@ -42,7 +42,7 @@ import java.math.BigInteger;
  * because <br>
  * g' = g-|gamma|+1 --> |gamma| <= g - g' + 1 = maxNode +1 
  * <br>
- * maxLength = |beta'| = |beta+gamma| <= |beta|+|gamma| <= b+ maxNode +1.
+ * maxLength = max(|alpha|, |alpha'|, |beta|, |beta'|) <= b 
  * <br>
  * All methods in arrayOP will check if the length of inputs equals maxLength. 
  * <p>
@@ -91,7 +91,7 @@ public class F0table {
         arrOP = new ArrayOp(maxLength);  
         printLast = a + 1;
         wDeg = 10;
-        parArr = new Partitions(b, maxLength);
+        parArr = new Partitions(b);
         prevMap = new HashMap<ArrayList<Integer>, Long>();
         curMap = new HashMap<ArrayList<Integer>, Long>();
     }
@@ -138,8 +138,8 @@ public class F0table {
             // Compute N and put in the table           
             for (int g = MyF.g_a(i, b) - maxNode; g <= MyF.g_a(i, b); g++) {
                 for (int j = b; j >= 0; j--) {
-                    for (int[] alpha : parArr.get(j)) {
-                        for (int[] beta : parArr.get(b - j)) {
+                    for (byte[] alpha : parArr.get(j)) {
+                        for (byte[] beta : parArr.get(b - j)) {
                             curMap.put(Key.make(i, b, g, alpha, beta), 
                                 N(i, b, g, alpha, beta));
                         }
@@ -167,8 +167,8 @@ public class F0table {
                     PrintWriter pw = new PrintWriter(outputfile, "UTF-8"); 
                     PrintWriter gen = new PrintWriter(genFun, "UTF-8");
                     for (int j = b; j > 4; j--) {
-                        for (int[] alpha : parArr.get(j)) {
-                            for (int[] beta : parArr.get(b - j)) {
+                        for (byte[] alpha : parArr.get(j)) {
+                            for (byte[] beta : parArr.get(b - j)) {
                                 long ansN = N(i, b, g, alpha, beta);
                                 curMap.put(Key.make(i, b, g, alpha, beta), ansN);
                                 pw.printf("N(O(%d, %d), %d, %s, %s) = %d\n", 
@@ -177,9 +177,9 @@ public class F0table {
                         }    
                     }
                     for (int j = Math.min(4, b); j >= 0; j--) {
-                        for (int[] alpha : parArr.get(j)) {
+                        for (byte[] alpha : parArr.get(j)) {
                             gen.println("alpha = " + MyF.str(alpha));
-                            for (int[] beta : parArr.get(b - j)) {
+                            for (byte[] beta : parArr.get(b - j)) {
                                 long ansN = N(i, b, g, alpha, beta);
                                 curMap.put(Key.make(i, b, g, alpha, beta), ansN);
                                 pw.printf("N(O(%d, %d), %d, %s, %s) = %d\n", 
@@ -203,7 +203,7 @@ public class F0table {
     /** 
      * The recursive formula is implemented here. 
      */
-    private long N(int aa, int bb, int g, int[] alpha, int[] beta) {      
+    private long N(int aa, int bb, int g, byte[] alpha, byte[] beta) {      
         // invalid parameters
         if (arrOP.I(alpha) + arrOP.I(beta) != b  || aa < 0 || bb < 0) {
             return 0;             
@@ -221,8 +221,8 @@ public class F0table {
         BigInteger ans = BigInteger.ZERO; 
         for (int k = 0; k < maxLength; k++) {    // the first term
             if (beta[k] > 0) {
-                int[] tempAlpha = alpha.clone();
-                int[] tempBeta = beta.clone();
+                byte[] tempAlpha = alpha.clone();
+                byte[] tempBeta = beta.clone();
                 //alpha_+e_k, beta-e_k
                 tempAlpha[k] = alpha[k] + 1;
                 tempBeta[k] = beta[k] - 1;  
@@ -238,10 +238,10 @@ public class F0table {
         }        
         if (aa > 0) {                              // the second term
             for (int j = arrOP.sum(beta) - MyF.g_a(aa, bb) + g + b; j <= bb; j++) {
-                for (int[] bP : parArr.get(j)) {
-                    for (int[] aP : parArr.get(bb - j)) {
+                for (byte[] bP : parArr.get(j)) {
+                    for (byte[] aP : parArr.get(bb - j)) {
                         if (arrOP.greater(alpha, aP) && arrOP.greater(bP, beta)) {
-                            int[] gamma = arrOP.substract(bP, beta);
+                            byte[] gamma = arrOP.substract(bP, beta);
                             int gP = g - arrOP.sum(gamma) + 1;
                             if (gP <= MyF.g_a(aa - 1, bb) && gP >= MyF.g_a(aa - 1, bb) - maxNode) {
                                 ArrayList<Integer> key = Key.make(aa - 1, bb, gP, aP, bP);

@@ -1,13 +1,10 @@
 #BlueJ class context
 comment0.target=Key
-comment0.text=\ The\ Key\ class\ has\ three\ static\ methods\ to\ concatenate\ intputs\ into\ an\ \n\ ArrayList\ of\ Integer.\ All\ methods\ are\ called\ make.\ The\ only\ difference\ \n\ is\ they\ accept\ different\ inputs.\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.1\n\ @since\ August\ 24,\ 2019.\n
-comment1.params=a\ b\ g\ alpha\ beta
-comment1.target=java.util.ArrayList\ make(int,\ int,\ int,\ java.util.ArrayList,\ java.util.ArrayList)
-comment1.text=\n\ The\ make\ method\ concatenate\ three\ integers\ and\ two\ ArrayList<Integers>.\ \n\ \n\ @param\ a\ int\n\ @param\ b\ int\n\ @param\ g\ int\n\ @param\ alpha\ ArrayList<Byte>\n\ @param\ beta\ ArrayList<Byte>\n\ @return\ ArrayList<Byte>\ The\ concatenation\ of\ the\ inputs\ \n\ (no\ separators).\ \n
-comment2.params=a\ b\ g\ alpha\ beta
-comment2.target=java.util.ArrayList\ make(int,\ int,\ int,\ byte[],\ byte[])
-comment2.text=\n\ The\ make\ method\ concatenate\ three\ integers\ and\ two\ ArrayList<Integers>.\ \n\ \n\ @param\ a\ int\n\ @param\ b\ int\n\ @param\ g\ int\n\ @param\ alpha\ int[]\n\ @param\ beta\ int[]\n\ @return\ ArrayList<Byte>\ The\ concatenation\ of\ the\ inputs\ \n\ (no\ separators).\ \n
-comment3.params=r\ alpha\ beta
-comment3.target=java.util.ArrayList\ make(int,\ byte[],\ byte[])
-comment3.text=\n\ The\ make\ method\ concatenate\ one\ integer\ and\ two\ int[].\ \n\ \n\ @param\ r\ int\n\ @param\ alpha\ int[]\n\ @param\ beta\ int[]\n\ @return\ ArrayList<Byte>\ The\ concatenation\ of\ the\ inputs\ \n\ (no\ separators).\ \n
-numComments=4
+comment0.text=\ The\ Key\ class\ has\ two\ static\ methods\ to\ concatenate\ intputs\ into\ an\ \n\ ArrayList\ of\ Bytes.\ Both\ methods\ are\ called\ make.\ The\ only\ difference\ \n\ between\ them\ is\ the\ types\ of\ inputs.\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.2\n\ @since\ March\ 12,\ 2020.\n
+comment1.params=r\ alpha\ beta
+comment1.target=java.util.ArrayList\ make(int,\ byte[],\ byte[])
+comment1.text=\n\ The\ make\ method\ concatenates\ one\ integer\ and\ two\ byte[].\ \n\ @param\ r\ int,\ need\ to\ be\ small\ enough\ to\ fit\ in\ byte\ type.\ \n\ @param\ alpha\ byte[]\n\ @param\ beta\ byte[]\n\ @return\ ArrayList<Byte>\ The\ concatenation\ of\ the\ inputs\ \n\ (no\ separators).\ \n
+comment2.params=g\ alpha\ beta
+comment2.target=java.util.ArrayList\ make(int,\ java.util.ArrayList,\ java.util.ArrayList)
+comment2.text=\n\ The\ make\ method\ concatenates\ one\ integer\ and\ two\ ArrayList<Integers>.\ \n\ @param\ g\ int\n\ @param\ alpha\ ArrayList<Integer>\n\ @param\ beta\ ArrayList<Integer>\n\ @return\ ArrayList<Integer>\ The\ concatenation\ of\ the\ inputs\ \n\ (no\ separators).\ \n
+numComments=3
