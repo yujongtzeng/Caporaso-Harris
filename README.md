@@ -7,10 +7,10 @@ The recursive formulae can be found here:
 
 ### Features
 We improved the naive recursive algorithm by:
-* using dynamic approach
-* limiting the number of nodes in a fixed range chosen by users
+* dynamic approach algorithms
+* letting users to choose the range of degrees and nodes
 * testing pre-generated partitions alpha' and beta' for the second term instead of generating valid alpha' and beta' every time
-* finding effective range for the second term in recursive formulae
+* avoiding unnecessary computations in the second term in recursive formulae
 
 ### Installing
 No installation is needed.
