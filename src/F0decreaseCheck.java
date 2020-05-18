@@ -42,8 +42,8 @@ public class F0decreaseCheck {
      * The output will will contain number of curves in |O(i,b)| for i = 
      * (a - printLast + 1) to a.
      */ 
-    private static HashMap<ArrayList<Integer>, Long> prevMap;
-    private static HashMap<ArrayList<Integer>, Long> curMap;   
+    private static HashMap<ArrayList<Byte>, Long> prevMap;
+    private static HashMap<ArrayList<Byte>, Long> curMap;   
     private Partitions parArr; 
 
     /**
@@ -60,9 +60,9 @@ public class F0decreaseCheck {
         maxLength = b;    
 
         arrOP = new ArrayOp(maxLength);  
-        parArr = new Partitions(b, maxLength);
-        prevMap = new HashMap<ArrayList<Integer>, Long>();
-        curMap = new HashMap<ArrayList<Integer>, Long>();
+        parArr = new Partitions(b);
+        prevMap = new HashMap<ArrayList<Byte>, Long>();
+        curMap = new HashMap<ArrayList<Byte>, Long>();
     }
     
     /** 
@@ -103,16 +103,16 @@ public class F0decreaseCheck {
         for (int i = 0; i <= a; i++) {
             System.out.println("Computing a = " + i);
             prevMap = curMap;
-            curMap = new HashMap<ArrayList<Integer>, Long>();                                      
+            curMap = new HashMap<ArrayList<Byte>, Long>();                                      
             // Compute N and put in the table           
             for (int g = MyF.g_a(i, b) - gdiff; g <= MyF.g_a(i, b); g++) {                
                 for (int j = 0; j <= b; j++) {
-                    for (int[] beta : parArr.get(j)) {
+                    for (byte[] beta : parArr.get(j)) {
                         long lastN = Long.MAX_VALUE;
                         //System.out.print(MyF.str(beta));
-                        for (int[] alpha : parArr.get(b - j)) {                                
+                        for (byte[] alpha : parArr.get(b - j)) {                                
                             long ansN =  N(i, b, g, alpha, beta);
-                            curMap.put(Key.make(i, b, g, alpha, beta), ansN);
+                            curMap.put(Key.make(g, alpha, beta), ansN);
                             if (lastN < ansN) {
                                 System.out.format("N(%d, %d, %d, %s, %s) > %d\n"
                                     , i, b, g, MyF.str(alpha), MyF.str(beta), lastN);
@@ -129,7 +129,7 @@ public class F0decreaseCheck {
     /** 
      * The recursive formula is implemented here. 
      */
-    private long N(int aa, int bb, int g, int[] alpha, int[] beta) {
+    private long N(int aa, int bb, int g, byte[] alpha, byte[] beta) {
         long ans = 0 ;        
         // invalid parameters
         if (arrOP.I(alpha) + arrOP.I(beta) != b  || aa < 0 || bb < 0) {
@@ -147,14 +147,14 @@ public class F0decreaseCheck {
         }               
         for (int k = 0; k < maxLength; k++) {    // the first term
             if (beta[k] > 0) {
-                int[] tempAlpha = alpha.clone();
-                int[] tempBeta = beta.clone();
+                byte[] tempAlpha = alpha.clone();
+                byte[] tempBeta = beta.clone();
                 //alpha_+e_k, beta-e_k
-                tempAlpha[k] = alpha[k] + 1;
-                tempBeta[k] = beta[k] - 1;  
-                if (curMap.containsKey(Key.make(aa, bb, g, tempAlpha, tempBeta))) 
+                tempAlpha[k] = (byte) (alpha[k] + 1);
+                tempBeta[k] = (byte) (beta[k] - 1);  
+                if (curMap.containsKey(Key.make(g, tempAlpha, tempBeta))) 
                     ans = ans + (k + 1) * 
-                        curMap.get(Key.make(aa, bb, g, tempAlpha, tempBeta));
+                        curMap.get(Key.make(g, tempAlpha, tempBeta));
                 else 
                     System.out.format("N(%d, %d, %d, %s, %s) can't be found.\n",
                                 aa, bb, g, MyF.str(tempAlpha), MyF.str(tempBeta));
@@ -162,16 +162,16 @@ public class F0decreaseCheck {
         }        
         if (aa > 0) {                              // the second term
             for (int j = arrOP.sum(beta) - MyF.g_a(aa, bb) + g + b; j <= bb; j++) {
-                for (int[] bP : parArr.get(j)) {
-                    for (int[] aP : parArr.get(bb - j)) {
+                for (byte[] bP : parArr.get(j)) {
+                    for (byte[] aP : parArr.get(bb - j)) {
                         if (arrOP.greater(alpha, aP) && arrOP.greater(bP, beta)) {
-                            int[] gamma = arrOP.substract(bP, beta);
+                            byte[] gamma = arrOP.substract(bP, beta);
                             int gP = g - arrOP.sum(gamma) + 1;
                             if (gP <= MyF.g_a(aa - 1, bb) && gP >= MyF.g_a(aa - 1, bb) - gdiff) {
-                                if (prevMap.containsKey(Key.make(aa - 1, bb, gP, aP, bP))) {
+                                if (prevMap.containsKey(Key.make(gP, aP, bP))) {
                                     long coeff = arrOP.J(gamma) * arrOP.binom(alpha, aP) 
                                                  * arrOP.binom(bP, beta);
-                                    ans = ans + coeff * prevMap.get(Key.make(aa - 1, bb, gP, aP, bP));
+                                    ans = ans + coeff * prevMap.get(Key.make(gP, aP, bP));
                                 }
                                 else { // Table doesn't contain this term
                                     System.out.format("Finding N(%d, %d, %d, %s, %s)\n",
