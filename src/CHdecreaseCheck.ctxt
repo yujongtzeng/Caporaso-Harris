@@ -11,6 +11,6 @@ comment3.params=
 comment3.target=void\ compute()
 comment3.text=\ \n\ Put\ N(O(d),\ r,\ alpha\ and\ beta)\ into\ dictionary\ \n\ for\ given\ d,\ r\ \=\ 0,...,maxNode\ and\ all\ valid\ alpha\ and\ beta.\n\ If\ d\ >\=\ deg\ -\ printLast,\ write\ the\ result\ in\ the\ output\ file.\ \n
 comment4.params=d\ r\ alpha\ beta
-comment4.target=long\ N(int,\ int,\ int[],\ int[])
+comment4.target=long\ N(int,\ int,\ byte[],\ byte[])
 comment4.text=\ \n\ The\ recursive\ formula\ is\ implemented\ here.\ \n
 numComments=5

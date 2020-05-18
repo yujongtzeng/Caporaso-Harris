@@ -41,8 +41,8 @@ public class CHdecreaseCheck {
      * The output will will contain CH invariants for d = 
      * (maxNode -printLast +1) to maxNode. 
      */  
-    private HashMap<ArrayList<Integer>, Long> prevMap;
-    private HashMap<ArrayList<Integer>, Long> curMap;    
+    private HashMap<ArrayList<Byte>, Long> prevMap;
+    private HashMap<ArrayList<Byte>, Long> curMap;    
     private Partitions parArr; 
 
     /**
@@ -56,9 +56,9 @@ public class CHdecreaseCheck {
         // maxLength = |beta'| <= d
         maxLength = deg;           
         arrOP = new ArrayOp(maxLength);      
-        parArr = new Partitions(deg, maxLength);
-        prevMap = new HashMap<ArrayList<Integer>, Long>();
-        curMap = new HashMap<ArrayList<Integer>, Long>();
+        parArr = new Partitions(deg);
+        prevMap = new HashMap<ArrayList<Byte>, Long>();
+        curMap = new HashMap<ArrayList<Byte>, Long>();
     }
     
     /** 
@@ -93,13 +93,13 @@ public class CHdecreaseCheck {
     private void compute() {    
         for (int d = 1; d <= deg; d++) {
             prevMap = curMap;
-            curMap = new HashMap<ArrayList<Integer>, Long>();
+            curMap = new HashMap<ArrayList<Byte>, Long>();
             System.out.println("Checking: d = " + d);
             for (int r = 0; r <= maxNode; r++) {
                 for (int j = 0; j <= d; j++) {
-                    for (int[] beta : parArr.get(j)) {
+                    for (byte[] beta : parArr.get(j)) {
                         long lastN = Long.MAX_VALUE;
-                        for (int[] alpha : parArr.get(d - j)) {
+                        for (byte[] alpha : parArr.get(d - j)) {
                             long ansN = N(d, r, alpha, beta);
                             curMap.put(Key.make(r, alpha, beta), ansN);
                             if (lastN < ansN) {
@@ -116,7 +116,7 @@ public class CHdecreaseCheck {
     /** 
      * The recursive formula is implemented here. 
      */
-    private long N(int d, int r, int[] alpha, int[] beta) {  
+    private long N(int d, int r, byte[] alpha, byte[] beta) {  
         if (arrOP.I(alpha) + arrOP.I(beta) != d) {
             System.out.format("I(%s) + I(%s) must equal to %d\n", 
                                MyF.str(alpha), MyF.str(beta), d);
@@ -137,10 +137,11 @@ public class CHdecreaseCheck {
         long ans = 0 ;        
         for (int k = 0; k < maxLength; k++) { // the first term
             if (beta[k] > 0) {
-                int[] tempAlpha = alpha.clone();
-                int[] tempBeta = beta.clone();
-                tempAlpha[k] = alpha[k] + 1;  //alpha_+e_k, beta-e_k
-                tempBeta[k] = beta[k] - 1;                
+                byte[] tempAlpha = alpha.clone();
+                byte[] tempBeta = beta.clone();
+                //alpha_+e_k, beta-e_k
+                tempAlpha[k] = (byte) (alpha[k] + 1);  
+                tempBeta[k] = (byte) (beta[k] - 1);                
                 if (curMap.containsKey(Key.make(r, tempAlpha, tempBeta))) 
                     ans = ans + (k + 1) * 
                           curMap.get(Key.make(r, tempAlpha, tempBeta));
@@ -152,10 +153,10 @@ public class CHdecreaseCheck {
         }        
         if (d > 0) {                              // the second term
             for (int j = arrOP.sum(beta) - r + d - 1; j < d; j++) {
-                for (int[] bP : parArr.get(j)) {
-                    for (int[] aP : parArr.get(d - 1 - j)) {
+                for (byte[] bP : parArr.get(j)) {
+                    for (byte[] aP : parArr.get(d - 1 - j)) {
                         if (arrOP.greater(alpha, aP) && arrOP.greater(bP, beta)) {
-                            int[] gamma = arrOP.substract(bP, beta);
+                            byte[] gamma = arrOP.substract(bP, beta);
                             int rP = r + arrOP.sum(gamma) - d + 1;
                             if (rP >= 0 && rP <= maxNode) {
                                 if (prevMap.containsKey(Key.make(rP, aP, bP))) {
