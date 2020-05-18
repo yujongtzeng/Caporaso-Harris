@@ -5,7 +5,7 @@ import java.util.Arrays;
  * between them is the types of inputs. 
  * @author Yu-jong Tzeng
  * @version 2.2
- * @since March 12, 2020.
+ * @since May 18, 2020.
  */
 
 public class Key   

@@ -1,12 +1,12 @@
 #BlueJ class context
 comment0.target=Partitions
-comment0.text=\n\ The\ Partitions\ class\ generates\ all\ integer\ partitions\ of\ nonnegative\ \n\ integers\ less\ or\ equal\ to\ n.\ Partitions\ are\ written\ in\ the\ notations\ of\n\ Caporaso-Harris'\ paper\ "Counting\ plane\ curves\ of\ any\ genus",\ \n\ i.e.\ if\ n\ \=\ a_1*1\ +\ a_2*2\ +\ ....+\ a_n*n\ is\ a\ partition\ of\ n,\ then\ this\ \n\ partitions\ is\ recorded\ as\ (a_1,\ a_2,\ ....,\ a_n).\ \n\ Note\ all\ partitions\ will\ have\ a\ fixed\ length\ n.\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @since\ March\ 12,\ 2020\n\ @version\ 1.2\n
+comment0.text=\n\ The\ Partitions\ class\ generates\ all\ integer\ partitions\ of\ nonnegative\ \n\ integers\ less\ or\ equal\ to\ n.\ Partitions\ are\ expressed\ in\ the\ notations\ of\n\ Caporaso-Harris'\ paper\ "Counting\ plane\ curves\ of\ any\ genus",\ \n\ i.e.\ if\ n\ \=\ 1*a_1\ +\ 2*a_2\ +\ ....+\ n*a_n\ is\ a\ partition\ of\ n,\ then\ this\ \n\ partition\ is\ recorded\ as\ (a_1,\ a_2,\ ...,\ a_n).\ \n\ Note\ all\ partitions\ will\ have\ a\ fixed\ length\ n.\ \n\ \n\ The\ input\ n\ has\ to\ be\ less\ or\ equal\ than\ 127\ (byte\ maximum).\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @since\ May\ 18,\ 2020\n\ @version\ 1.2\n
 comment1.params=n
 comment1.target=Partitions(int)
-comment1.text=\n\ Constructor\ for\ the\ class\n\ \n\ @param\ n\ the\ upper\ bound\ of\ the\ integers\ for\ which\ all\ integer\ \n\ partitions\ will\ be\ generated.\n
+comment1.text=\n\ Constructor\ for\ the\ class\n\ \n\ @param\ n\ the\ upper\ bound\ of\ the\ integers\ for\ which\ all\ integer\ \n\ partitions\ will\ be\ generated.\ n\ is\ requied\ to\ be\ less\ or\ equal\ than\n\ 127.\ \n
 comment2.params=k
 comment2.target=get(int)
-comment2.text=\n\ Return\ all\ partitions\ of\ the\ input\ number\ k\ as\ a\ byte\ array.\ \n\ @param\ k\ Any\ integer\ with\ 0\ <\=\ k\ <\=\ n\n\ @return\ All\ partitions\ of\ k\ if\ 0\ <\=\ k\ <\=\ n.\ Otherwise\n\ return\ an\ empty\ Arraylist.\n
+comment2.text=\n\ Return\ all\ partitions\ of\ the\ input\ number\ k\ as\ an\ ArrayList\ of\ byte\ \n\ arrays.\ \n\ @param\ k\ Any\ integer\ with\ 0\ <\=\ k\ <\=\ n\n\ @return\ All\ partitions\ of\ k\ if\ 0\ <\=\ k\ <\=\ n.\ Otherwise\n\ return\ an\ empty\ Arraylist.\n
 comment3.params=
 comment3.target=void\ print()
 comment3.text=\n\ Print\ all\ partitions\ generated\ in\ the\ object.\ \ \n

@@ -2,14 +2,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 /**
  * The Partitions class generates all integer partitions of nonnegative 
- * integers less or equal to n. Partitions are written in the notations of
+ * integers less or equal to n. Partitions are expressed in the notations of
  * Caporaso-Harris' paper "Counting plane curves of any genus", 
- * i.e. if n = a_1*1 + a_2*2 + ....+ a_n*n is a partition of n, then this 
- * partitions is recorded as (a_1, a_2, ...., a_n). 
+ * i.e. if n = 1*a_1 + 2*a_2 + ....+ n*a_n is a partition of n, then this 
+ * partition is recorded as (a_1, a_2, ..., a_n). 
  * Note all partitions will have a fixed length n. 
  * 
+ * The input n has to be less or equal than 127 (byte maximum). 
+ * 
  * @author Yu-jong Tzeng
- * @since March 12, 2020
+ * @since May 18, 2020
  * @version 1.2
  */
 public class Partitions
@@ -21,20 +23,28 @@ public class Partitions
      * Constructor for the class
      * 
      * @param n the upper bound of the integers for which all integer 
-     * partitions will be generated.
+     * partitions will be generated. n is requied to be less or equal than
+     * 127. 
      */
     public Partitions(int n)
     {
-        parArray = new ArrayList[n + 1];
-        maxL = n;
-        for (int k = 0; k <= n; k++) {
-            // generate all partitions of k.            
-            parArray[k] = new ArrayList<byte[]>();
-            initialize(k , new byte[n], 0, parArray[k]);       
+        if (n < 0 || n > 127) {
+            System.out.print("The input of the Partitions class is ");
+            System.out.println("requred to be betwee 0 and 127.");
+        }
+        else {
+            parArray = new ArrayList[n + 1];
+            maxL = n;
+            for (int k = 0; k <= n; k++) {
+                // generate all partitions of k.            
+                parArray[k] = new ArrayList<byte[]>();
+                initialize(k, new byte[n], 0, parArray[k]);       
+            }
         }
     }
     /**
-     * Return all partitions of the input number k as a byte array. 
+     * Return all partitions of the input number k as an ArrayList of byte 
+     * arrays. 
      * @param k Any integer with 0 <= k <= n
      * @return All partitions of k if 0 <= k <= n. Otherwise
      * return an empty Arraylist.

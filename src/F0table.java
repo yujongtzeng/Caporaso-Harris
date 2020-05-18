@@ -140,7 +140,7 @@ public class F0table {
                 for (int j = b; j >= 0; j--) {
                     for (byte[] alpha : parArr.get(j)) {
                         for (byte[] beta : parArr.get(b - j)) {
-                            curMap.put(Key.make(i, b, g, alpha, beta), 
+                            curMap.put(Key.make(g, alpha, beta), 
                                 N(i, b, g, alpha, beta));
                         }
                     }
