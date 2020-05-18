@@ -1,7 +1,0 @@
-#BlueJ class context
-comment0.target=binom
-comment1.params=n
-comment1.target=binom(int)
-comment2.params=n
-comment2.target=void\ test(int)
-numComments=3
