@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=Key
-comment0.text=\ The\ Key\ class\ has\ two\ static\ methods\ to\ concatenate\ intputs\ into\ an\ \n\ ArrayList\ of\ Bytes.\ Both\ methods\ are\ called\ make.\ The\ only\ difference\ \n\ between\ them\ is\ the\ types\ of\ inputs.\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.2\n\ @since\ May\ 18,\ 2020.\n
+comment0.text=\ The\ Key\ class\ has\ two\ static\ methods\ to\ concatenate\ inputs\ into\ an\ \n\ ArrayList.\ Both\ methods\ are\ called\ make.\ The\ only\ difference\ \n\ between\ them\ is\ the\ types\ of\ inputs.\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.2\n\ @since\ May\ 18,\ 2020.\n
 comment1.params=r\ alpha\ beta
 comment1.target=java.util.ArrayList\ make(int,\ byte[],\ byte[])
 comment1.text=\n\ The\ make\ method\ concatenates\ one\ integer\ and\ two\ byte[].\ \n\ @param\ r\ int,\ need\ to\ be\ small\ enough\ to\ fit\ in\ byte\ type.\ \n\ @param\ alpha\ byte[]\n\ @param\ beta\ byte[]\n\ @return\ ArrayList<Byte>\ The\ concatenation\ of\ the\ inputs\ \n\ (no\ separators).\ \n

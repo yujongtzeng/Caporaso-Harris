@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-/** The Key class has two static methods to concatenate intputs into an 
- * ArrayList of Bytes. Both methods are called make. The only difference 
+/** The Key class has two static methods to concatenate inputs into an 
+ * ArrayList. Both methods are called make. The only difference 
  * between them is the types of inputs. 
  * @author Yu-jong Tzeng
  * @version 2.2
