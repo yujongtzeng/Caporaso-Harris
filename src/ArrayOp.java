@@ -1,5 +1,5 @@
 /** 
- * The arrayOP class does operations on arrays of integers. 
+ * The ArrayOp class provides operations on arrays of bytes. 
  * <p>
  * The input and returned values for each methods are integers or byte[] of 
  * fixed length. Error message will be 
@@ -7,13 +7,13 @@
  * <p>
  * All components of the input are assumed to be nonnegative integers. 
  * All components of the output will be nonnegative integers too. 
- * For substract and binom, we check first that the first input is 
- * greater or equal to the second input so the operation works in the 
+ * For substract and binom, the program checks whether the first input is 
+ * greater or equal to the second input so that those operations work in the 
  * naive way. 
  * 
  * @author Yu-jong Tzeng
  * @version 1.1.2 
- * @since August 25, 2019.
+ * @since May 18, 2020.
  */
 
 public class ArrayOp
@@ -23,11 +23,12 @@ public class ArrayOp
     
     /** 
      * Before doing any operations, the class builds a table of all 
-     * binomial coefficients with m (<= n) choose k 
-     * elements for any k. n is the required length for inputs. 
+     * binomial coefficients m choose k for all 0 <= k <= m <= n.
+     * n is the required length for inputs. 
      * 
      * @param n The max parameter can be taken for binomial coefficients.
-     * It is also the required length for inputs and outputs. 
+     * It is also the required length for input arrays and outputs arrays of 
+     * all methods. 
      */
     public ArrayOp(int n) {
         length = n;
@@ -102,7 +103,7 @@ public class ArrayOp
      * @param c byte[]
      * @param d byte[]
      * @return The componentwise difference of the inputs. Send error 
-     * message if the length of c and d are not equal to n.
+     * message if the length of c or d is not equal to n.
      */
     public byte[] substract(byte[] c, byte[] d) {        
         if (!greater(c, d)) {

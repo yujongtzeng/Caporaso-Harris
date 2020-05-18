@@ -1,9 +1,9 @@
 #BlueJ class context
 comment0.target=ArrayOp
-comment0.text=\ \n\ The\ arrayOP\ class\ does\ operations\ on\ arrays\ of\ integers.\ \n\ <p>\n\ The\ input\ and\ returned\ values\ for\ each\ methods\ are\ integers\ or\ byte[]\ of\ \n\ fixed\ length.\ Error\ message\ will\ be\ \n\ thrown\ if\ the\ length\ of\ input\ is\ incorrect.\n\ <p>\n\ All\ components\ of\ the\ input\ are\ assumed\ to\ be\ nonnegative\ integers.\ \n\ All\ components\ of\ the\ output\ will\ be\ nonnegative\ integers\ too.\ \n\ For\ substract\ and\ binom,\ we\ check\ first\ that\ the\ first\ input\ is\ \n\ greater\ or\ equal\ to\ the\ second\ input\ so\ the\ operation\ works\ in\ the\ \n\ naive\ way.\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 1.1.2\ \n\ @since\ August\ 25,\ 2019.\n
+comment0.text=\ \n\ The\ ArrayOp\ class\ provides\ operations\ on\ arrays\ of\ bytes.\ \n\ <p>\n\ The\ input\ and\ returned\ values\ for\ each\ methods\ are\ integers\ or\ byte[]\ of\ \n\ fixed\ length.\ Error\ message\ will\ be\ \n\ thrown\ if\ the\ length\ of\ input\ is\ incorrect.\n\ <p>\n\ All\ components\ of\ the\ input\ are\ assumed\ to\ be\ nonnegative\ integers.\ \n\ All\ components\ of\ the\ output\ will\ be\ nonnegative\ integers\ too.\ \n\ For\ substract\ and\ binom,\ the\ program\ checks\ whether\ the\ first\ input\ is\ \n\ greater\ or\ equal\ to\ the\ second\ input\ so\ that\ those\ operations\ work\ in\ the\ \n\ naive\ way.\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 1.1.2\ \n\ @since\ May\ 18,\ 2020.\n
 comment1.params=n
 comment1.target=ArrayOp(int)
-comment1.text=\ \n\ Before\ doing\ any\ operations,\ the\ class\ builds\ a\ table\ of\ all\ \n\ binomial\ coefficients\ with\ m\ (<\=\ n)\ choose\ k\ \n\ elements\ for\ any\ k.\ n\ is\ the\ required\ length\ for\ inputs.\ \n\ \n\ @param\ n\ The\ max\ parameter\ can\ be\ taken\ for\ binomial\ coefficients.\n\ It\ is\ also\ the\ required\ length\ for\ inputs\ and\ outputs.\ \n
+comment1.text=\ \n\ Before\ doing\ any\ operations,\ the\ class\ builds\ a\ table\ of\ all\ \n\ binomial\ coefficients\ m\ choose\ k\ for\ all\ 0\ <\=\ k\ <\=\ m\ <\=\ n.\n\ n\ is\ the\ required\ length\ for\ inputs.\ \n\ \n\ @param\ n\ The\ max\ parameter\ can\ be\ taken\ for\ binomial\ coefficients.\n\ It\ is\ also\ the\ required\ length\ for\ input\ arrays\ and\ outputs\ arrays\ of\ \n\ all\ methods.\ \n
 comment10.params=c\ d
 comment10.target=long\ binom(byte[],\ byte[])
 comment10.text=\n\ Product\ of\ componentwise\ binomial\ coefficients.\ Every\ component\ \n\ of\ the\ first\ input\ must\ be\ greater\ or\ equal\ to\ the\ second\ input.\ \n\ @param\ c\ byte[]\n\ @param\ d\ byte[]\n\ @return\ The\ product\ of\ all\ C[ci][di]\ (C[n][k]\ is\ the\ binomial\ \n\ coeffient).\ \ \n
@@ -18,7 +18,7 @@ comment4.target=byte[]\ add(byte[],\ byte[])
 comment4.text=\n\ Add\ two\ arrays\ componentwisely.\n\ @param\ c\ byte[]\n\ @param\ d\ byte[]\n\ @return\ The\ componentwise\ sum\ of\ the\ inputs.\ \n
 comment5.params=c\ d
 comment5.target=byte[]\ substract(byte[],\ byte[])
-comment5.text=\n\ Substract\ the\ second\ input\ from\ the\ first\ input.\ Every\ component\ \n\ of\ the\ first\ input\ must\ be\ great\ or\ equal\ to\ the\ second\ input.\ \n\ @param\ c\ byte[]\n\ @param\ d\ byte[]\n\ @return\ The\ componentwise\ difference\ of\ the\ inputs.\ Send\ error\ \n\ message\ if\ the\ length\ of\ c\ and\ d\ are\ not\ equal\ to\ n.\n
+comment5.text=\n\ Substract\ the\ second\ input\ from\ the\ first\ input.\ Every\ component\ \n\ of\ the\ first\ input\ must\ be\ great\ or\ equal\ to\ the\ second\ input.\ \n\ @param\ c\ byte[]\n\ @param\ d\ byte[]\n\ @return\ The\ componentwise\ difference\ of\ the\ inputs.\ Send\ error\ \n\ message\ if\ the\ length\ of\ c\ or\ d\ is\ not\ equal\ to\ n.\n
 comment6.params=c
 comment6.target=int\ I(byte[])
 comment6.text=\n\ Compute\ Ic.\ \n\ @param\ c\ byte[]\n\ @return\ If\ c\ \=\ {c1,\ c2,\ c3,..},\ \ return\ 1*\ c1\ +\ 2*\ c2\ +\ 3\ *\ c3\ +\ ....\n
