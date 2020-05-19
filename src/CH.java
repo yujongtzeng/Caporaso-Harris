@@ -73,9 +73,10 @@ public class CH {
     // wDeg is the bound of weight degree of output monomial 
     private static int wDeg;  
     // The computation will start from degree 1 to deg one by one. 
-    // At stage d, prevMap contains all results of degree d - 1
-    // curSav contains
-    // curDump
+    // At stage d, prevMap contains results of degree d - 1
+    // curSav contains results of d which will possibly be used for d + 1
+    // curDump contains results of d which won't be used for d + 1
+    // When a new stage starts, prevMap = curSave and curDump is empty
     private HashMap<ArrayList<Byte>, BigInteger> prevMap;
     private HashMap<ArrayList<Byte>, BigInteger> curSave;   
     private HashMap<ArrayList<Byte>, BigInteger> curDump;   
@@ -97,7 +98,7 @@ public class CH {
         curSave = new HashMap<ArrayList<Byte>, BigInteger>();
     }    
     /** 
-     * Dealing with user input, create objects then call compute method. 
+     * This method promopt for user input, create objects then call compute().
      * Paramaters deg and maxNode are initialzed by user input. 
      * @param args Unused
      */
@@ -130,9 +131,10 @@ public class CH {
             curSave = new HashMap<ArrayList<Byte>, BigInteger>();  
             curDump = new HashMap<ArrayList<Byte>, BigInteger>();   
             if (d <= deg - printLast) {
-                // Compute N and put in the table
+                // Only compute N and put in dictionary
+                // cur is a working dictionary. First is curDump then curSave
                 HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
-                for (int r = 0, j = d; r <= maxNode && j >= 0; r++, j--) {       
+                for (int r = 0, j = d; r <= maxNode && j >= 0; r++, j--) {
                     // If j > maxNode then beta will be negative. 
                     // by d - 1 - j = Ibeta' >= |beta| - r + d - 1 so
                     // these numbers will not be used again for bigger degree.
@@ -145,65 +147,58 @@ public class CH {
                     }
                 }  
             }
-            else{
+            else {
                 for (int r = 0; r <= maxNode; r++) {
+                    // Space saving feature. Since no deg + 1 terms and the
+                    // first term has the same d, r, data in curDump and 
+                    // curSave can be thrown away. 
                     if (d == deg) {
                         curDump = new HashMap<ArrayList<Byte>, BigInteger>();
+                        curSave = new HashMap<ArrayList<Byte>, BigInteger>();
                     }
                     output(d, r);     
                 }    
             }
         }       
-        for (int d = Math.max(deg - printLast + 1, 1); d <= deg; d++) {
-            System.out.println("Computing d = " + d);
-            prevMap = curSave;
-            curSave = new HashMap<ArrayList<Byte>, BigInteger>();
-            curDump = new HashMap<ArrayList<Byte>, BigInteger>();
-            HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
-            for (int r = 0; r <= maxNode; r++) {
-                if (d == deg) {
-                    curSave = new HashMap<ArrayList<Byte>, BigInteger>();
-                    curDump = new HashMap<ArrayList<Byte>, BigInteger>();
-                    cur = curDump;
-                }
-                output(d, r);     
-            }    
-        }       
     } 
+    /** Write to output files and put results in dictionary.
+     * @param d the working degree
+     * @param r the working number of nodes
+     */
     private void output(int d, int r) {
         try {
-            String fileCH = String.format("output/CH/O(%d)_r=%d.txt", d, r);
-            String fgen = String.format("output/genCH/O(%d)_r=%d.txt", d, r);
+            String fileCH = String.format("../output/CH/O(%d)_r=%d.txt", d, r);
+            String fgen = String.format("../output/genCH/O(%d)_r=%d.txt", d, r);
             File outputfile = new File(fileCH);
             File genFun = new File(fgen); 
             outputfile.getParentFile().mkdirs();
             genFun.getParentFile().mkdirs();
-            PrintWriter pw = new PrintWriter(outputfile, "UTF-8");
+            PrintWriter num = new PrintWriter(outputfile, "UTF-8");
             PrintWriter gen = new PrintWriter(genFun, "UTF-8");
             HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
             for (int j = d; j >= 0; j--) {
-                  if (j <= maxNode) { cur = curSave; }
-                  for (byte[] alpha : parArr.get(j)) {
-                       if (j <= 4) { 
-                           gen.println("\n");
-                           gen.println("alpha = " + MyF.str(alpha));
-                       } 
-                       for (byte[] beta : parArr.get(d - j)) {
-                           BigInteger ansN = N(d, r, alpha, beta);
-                           cur.put(Key.make(r, alpha, beta), ansN);
-                           pw.printf("N(O(%d), %d, %s, %s) = %d\n", 
-                               d, r, MyF.str(alpha), MyF.str(beta), ansN);
-                           if (j <=4 && d - j - beta[0] <= wDeg) {
-                                gen.printf(ansN + MyF.toVar(beta) + "+");
-                           }          
-                       }
-                  }    
+                if (j <= maxNode) { cur = curSave; }
+                for (byte[] alpha : parArr.get(j)) {
+                    if (j <= 4) { 
+                        gen.println("\n");
+                        gen.println("alpha = " + MyF.str(alpha));
+                    } 
+                    for (byte[] beta : parArr.get(d - j)) {
+                        BigInteger ansN = N(d, r, alpha, beta);
+                        cur.put(Key.make(r, alpha, beta), ansN);
+                        num.printf("N(O(%d), %d, %s, %s) = %d\n", 
+                            d, r, MyF.str(alpha), MyF.str(beta), ansN);
+                        if (j <= 4 && d - j - beta[0] <= wDeg) {
+                            gen.printf(ansN + MyF.toVar(beta) + "+");
+                        }          
+                    }
+                }    
             }    
-            pw.close();
+            num.close();
             gen.close();
         } 
         catch (IOException e) {
-             System.out.println("There is an error in I/O.");
+            System.out.println("There is an error in I/O.");
         }  
     }
     /** 
@@ -230,7 +225,7 @@ public class CH {
         
         BigInteger ans = BigInteger.ZERO;  
         // the first term
-        for (int k = 0; k < deg; k++) { // the first term
+        for (int k = 0; k < deg; k++) { 
             if (beta[k] > 0) {
                 ans = ans.add(first(d, r, alpha, beta, k));
             }
@@ -245,7 +240,11 @@ public class CH {
         }    
         return ans;                                     
     }  
-    private BigInteger first(int d, int r, byte[] alpha, byte[] beta, int k) {      
+    /** 
+     * Computes a single term in the first term
+     */
+    private BigInteger first(int d, int r, byte[] alpha, byte[] beta, 
+                                int k) {      
         //now d >=2        
         byte[] tempAlpha = alpha.clone();
         byte[] tempBeta = beta.clone();
@@ -266,28 +265,31 @@ public class CH {
                 d, r, MyF.str(tempAlpha), MyF.str(tempBeta));
         }
         return BigInteger.ZERO;  
-    }              
+    }       
+    /** 
+     *  Computes a single term in the second term
+     */
     private BigInteger second(int d, int r, byte[] alpha, byte[] beta, 
                       byte[] aP, byte[] bP) {
         if (arrOP.greater(alpha, aP) && arrOP.greater(bP, beta)) {
-             byte[] gamma = arrOP.substract(bP, beta);
-             int rP = r + arrOP.sum(gamma) - d + 1;
-             // no need to check rP <= maxNode since 
-             // r + |gamma| - d + 1 <= maxNode + |bP| -d + 1
-             if (rP >= 0) {                
-                  ArrayList<Byte> key = Key.make(rP, aP, bP);
-                  if (prevMap.containsKey(key)) {
-                       BigInteger coeff = MyF.prod(arrOP.J(gamma),  
-                            arrOP.binom(alpha, aP), arrOP.binom(bP, beta));
-                       return coeff.multiply(prevMap.get(key));
-                  }
-                  else { // Table doesn't contain this term
-                       System.out.format("Finding N(%d, %d, %s, %s)\n", 
-                            d, r, MyF.str(alpha), MyF.str(beta));
-                       System.out.format("N(%d, %d, %s, %s) not found.\n", 
-                            d - 1, rP, MyF.str(aP), MyF.str(bP));
-                  }              
-             }
+            byte[] gamma = arrOP.substract(bP, beta);
+            int rP = r + arrOP.sum(gamma) - d + 1;
+            // no need to check rP <= maxNode since 
+            // r + |gamma| - d + 1 <= maxNode + |bP| -d + 1
+            if (rP >= 0) {                
+                ArrayList<Byte> key = Key.make(rP, aP, bP);
+                if (prevMap.containsKey(key)) {
+                    BigInteger coeff = MyF.prod(arrOP.J(gamma),  
+                         arrOP.binom(alpha, aP), arrOP.binom(bP, beta));
+                    return coeff.multiply(prevMap.get(key));
+                }
+                else { // Table doesn't contain this term
+                    System.out.format("Finding N(%d, %d, %s, %s)\n", 
+                        d, r, MyF.str(alpha), MyF.str(beta));
+                    System.out.format("N(%d, %d, %s, %s) not found.\n", 
+                        d - 1, rP, MyF.str(aP), MyF.str(bP));
+                }              
+            }
         }
         return BigInteger.ZERO;
     }    
