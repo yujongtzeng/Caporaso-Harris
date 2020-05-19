@@ -91,7 +91,7 @@ public class CH {
         this.maxNode = maxNode; 
         arrOP = new ArrayOp(deg);
         parArr = new Partitions(deg);
-        printLast = deg;
+        printLast = 5;
         wDeg = 10;        
         prevMap = new HashMap<ArrayList<Byte>, BigInteger>();                
         curDump = new HashMap<ArrayList<Byte>, BigInteger>();
@@ -124,7 +124,7 @@ public class CH {
      * for given d = 1,...,deg, r = 0,...,maxNode and all valid (alpha, beta).
      * If d >= deg - printLast, write the result in the output file. 
      */
-    private void compute() {
+    public void compute() {
         for (int d = 1; d <= deg; d++) {
             System.out.println("Computing d = " + d);
             prevMap = curSave;
@@ -256,7 +256,7 @@ public class CH {
             return curSave.get(key).multiply(BigInteger.valueOf(k + 1));
         }
         else if (curDump.containsKey(key)) {
-            return curSave.get(key).multiply(BigInteger.valueOf(k + 1));
+            return curDump.get(key).multiply(BigInteger.valueOf(k + 1));
         }
         else {
             System.out.format("Finding N(%d, %d, %s, %s)\n", 
