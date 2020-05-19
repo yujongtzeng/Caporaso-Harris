@@ -124,10 +124,9 @@ public class F0table {
                  
         F0table f0Table = new F0table(inputa, inputb, inputmaxNode);
         f0Table.compute();        
-    }
-    
+    }    
     /** 
-     * Run this method to compute and create output file.  
+     * Run this method to compute and create output files.  
      */
     public void compute() {
         // Here we put N(O(i, b), all valid alpha and beta) into dictionary
