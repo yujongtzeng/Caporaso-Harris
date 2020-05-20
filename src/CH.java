@@ -15,10 +15,11 @@ import java.math.BigInteger;
  * d and r. We will follow the notation in Section 1.1 of the article as 
  * much as possible.
  * <p>
- * Users will be prompted to enter the maximal degree and the maximal number 
+ * Users will be prompted to enter two integers: the maximal degree and 
+ * the maximal number 
  * of nodes for the curves in concern. <br>
  * 
- * The program will print the computation results in two kinds of txt files:
+ * The program will print two kinds of computation results in txt files:
  * numbers of nodal curves line by line and generating series. 
  * <p>
  * The first kind of files contain the number of degree d curves on the 
@@ -37,7 +38,7 @@ import java.math.BigInteger;
  * beta : tangency conditions at unassigned points. 
  * beta = (beta_1, beta_2,....).
  * <p> 
- * The output numbers will be located at output/CH and splitted according to 
+ * The output numbers will be located at output/CH and be split according to 
  * degree and the number of nodes. 
  * <p>
  * The second kind of files contain the generating series of those numbers. 
@@ -56,8 +57,8 @@ import java.math.BigInteger;
  * Notes on algorithm: <br>
  * This class and F0Table use the same algorithm. 
  * @author Yu-jong Tzeng
- * @version 3.0
- * @since May 19, 2020.
+ * @version 3.1
+ * @since May 20, 2020.
  */
 
 public class CH {
@@ -98,8 +99,8 @@ public class CH {
         curSave = new HashMap<ArrayList<Byte>, BigInteger>();
     }    
     /** 
-     * This method promopt for user input, create objects then call compute().
-     * Paramaters deg and maxNode are initialzed by user input. 
+     * This method prompt for user input, create objects then call compute().
+     * Parameters deg and maxNode are initialized by user input. 
      * @param args Unused
      */
     public static void main(String[] args) {
@@ -135,9 +136,9 @@ public class CH {
                 // cur is a working dictionary. First is curDump then curSave
                 HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
                 for (int r = 0, j = d; r <= maxNode && j >= 0; r++, j--) {
-                    // If j > maxNode then beta will be negative. 
-                    // by d - 1 - j = Ibeta' >= |beta| - r + d - 1 so
-                    // these numbers will not be used again for bigger degree.
+                    // If j > maxNode then next beta will be negative. 
+                    // by d - 1 - j = Ibeta' >= |beta| - r + d - 1 so these
+                    // numbers will not be used again for bigger degree.
                     if (j <= maxNode) { cur = curSave; }
                     for (byte[] alpha : parArr.get(j)) {
                         for (byte[] beta : parArr.get(d - j)) {
@@ -205,7 +206,7 @@ public class CH {
      * The recursive formula is implemented here. 
      */
     private BigInteger N(int d, int r, byte[] alpha, byte[] beta) {  
-        //invalid outputs
+        //invalid inputs
         if (arrOP.I(alpha) + arrOP.I(beta) != d) {
             System.out.format("I(%s) + I(%s) must equal to %d\n", 
                                MyF.str(alpha), MyF.str(beta), d);

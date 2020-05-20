@@ -6,106 +6,113 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 import java.math.BigInteger; 
-
-// todo: delete a, b from the key and re-run test speed and update to paper
+// todo: re-run test speed and update to paper
 /**
  * <p>
  * The F0table class uses dynamic programming approach to implement the 
- * recursive formula of Vakil in "Counting curves on rational surfaces" 
- * to compute the number of singular curves on P^1*P^1 which satisfy tangency 
- * conditions with a given line in |O(1,0)|. 
+ * recursive formula of Vakil in "Counting curves on rational surfaces". 
+ * The formula computes the number of singular curves on P^1*P^1 which 
+ * satisfy given tangency conditions with a fixed line in |O(1,0)|. 
  * <p>
- * The user needs to enter a, b and maxNode. 
+ * Users will be prompted to enter three integers: a, b and maxNode. 
  * <p>
  * (a,b): the maximal bi-degrees of the curve class <br>
- * maxNode:  max difference between the arithmetic genus and geometric genus of 
- * the curve the program will compute.  
+ * maxNode:  max difference between the arithmetic genus and geometric 
+ * genus of the curves in concern.  
  * <p>
- * The program will print our the number of genus g curves in |O(i,b)| on 
- * P^1*P^1 which satisfy tangency conditions (alpha, beta) with a given line 
- * in |O(1,0)| for  <br />
+ * The program will print two kinds of computation results in txt files:
+ * numbers of nodal curves line by line and generating series. 
+ * <p>
+ * The first kind of files contain the number of genus g curves of 
+ * bi-degreeson (i, b) on P^1*P^1 which satisfy tangency conditions 
+ * (alpha, beta) with a fixed line in |O(1,0)| for  <br />
  * 1) (i,b) for i = (a - 5 + 1),..., a (due to the recursive nature 
  * of Vakil's formula) (5 is the default number and can be changed by 
  * modifying the instance variable printLast),  <br />
  * 2) all g between (arithmetic genus of O(i,b) - maxNode) and 
  *    arithmetic genus of O(i,b),  <br />
  * 3) all valid tangency conditions alpha and beta 
- *    (valid = satisfy I(alpha)+I(beta) = b). 
+ *    (valid := satisfy I(alpha)+I(beta) = b). 
  * <p>
  * alpha : tangency conditions at assigned points.  <br>
  * beta : tangency conditions at unassigned points. 
  * beta = (beta_1, beta_2,....)
+ * <p> 
+ * The output numbers will be located at output/F0 and be split 
+ * according to degree and the number of nodes. 
  * <p>
+ * The second kind of files contain the generating series of those numbers. 
+ * See the documentation of CH.java for the definition and range of generating
+ * series. <p>
  * Note on algorithm:  <br />
- * alpha and beta are stored by integer arrays. The length of them (and 
- * variations) are of fixed length = maxLength = b + maxNode + 1. This is 
- * because <br>
- * g' = g-|gamma|+1 --> |gamma| <= g - g' + 1 = maxNode +1 
- * <br>
- * maxLength = max(|alpha|, |alpha'|, |beta|, |beta'|) <= b 
- * <br>
+ * alpha and beta are stored by byte arrays. The length of them (and 
+ * variations) are of fixed length b. The bound is from the maxLength of 
+ * alpha, alpha', beta, beta' <= b. 
  * All methods in arrayOP will check if the length of inputs equals maxLength. 
  * <p>
- * The output numbers will be located at output/F0 <br>
+ * The output numbers will be located at ../output/F0 <br>
  * All terms in the generating series satisfying total degree <= 5 and 
  * weighted degree <= 10 will be written in files at output/genFunF0. <br>
  * wdeg r = 0, wdeg b = 2, wdeg c = 3, .....
  * The range can be modified but the length of tangency conditions must <=25. 
  * <p>
  * @author Yu-jong Tzeng
- * @version 2.0
- * @since August 24, 2019.
+ * @version 2.1
+ * @since May 20, 2020.
  */
 
 public class F0table {  
     private static int a;
     private static int b;         
     private static int maxNode;
-    private static int maxLength;
-    private static ArrayOp arrOP;
+    private static ArrayOp arrOp;
     /**
-     * The number of different first degrees of the curve class which will 
-     * be printed out. 
-     * The output will will contain number of curves in |O(i,b)| for i = 
-     * (a - printLast + 1) to a.
+     * The number of top degrees of the curve class which 
+     * will be printed out. 
+     * The output will will contain number of curves in |O(i,b)| for 
+     * i = (a - printLast + 1) to a.
      */
     public static int printLast;   
-    private static int wDeg;       
-    private static HashMap<ArrayList<Integer>, Long> prevMap;
-    private static HashMap<ArrayList<Integer>, Long> curMap;   
+    // wDeg is the bound of weight degree of output monomial 
+    private static int wDeg; 
+    // The computation will start from i = 0 to b one by one. 
+    // At stage i, prevMap contains results of bi-degrees (i - 1, b)
+    // curSave: results of (i, b) will possibly be used for (i+1, b)
+    // curDump: results of (i, b) won't be used for (i+1, b)
+    private HashMap<ArrayList<Byte>, BigInteger> prevMap;
+    private HashMap<ArrayList<Byte>, BigInteger> curSave;   
+    private HashMap<ArrayList<Byte>, BigInteger> curDump;     
     private Partitions parArr; 
-
     /**
      * The constructor of the class.
      * @param a the number of ample class h in the curve class O(a,b)
      * @param b the number of fiber class h in the curve class O(a,b)
-     * @param maxNode the max difference between arithmetic genus and geometric 
-     * genus of the curve we'll compute
+     * @param maxNode the maximal difference between arithmetic genus and 
+     * geometric genus of the curves.
      */
     public F0table(int a, int b, int maxNode) {        
         this.a = a;
         this.b = b;
         this.maxNode = maxNode;       
-        maxLength = b;    
-
-        arrOP = new ArrayOp(maxLength);  
-        printLast = a + 1;
-        wDeg = 10;
+        arrOp = new ArrayOp(b);  
         parArr = new Partitions(b);
-        prevMap = new HashMap<ArrayList<Integer>, Long>();
-        curMap = new HashMap<ArrayList<Integer>, Long>();
-    }
-    
+        printLast = 5;
+        wDeg = 10;
+        prevMap = new HashMap<ArrayList<Byte>, BigInteger>();                
+        curDump = new HashMap<ArrayList<Byte>, BigInteger>();
+        curSave = new HashMap<ArrayList<Byte>, BigInteger>();
+    }    
     /** 
-     * Call this method compute the results and generate output. 
-     * User needs to enter a, b, and maxNode. 
+     * This method prompt for user input, create objects then call compute(). 
+     * Parameters a, b, and maxNode are initialized by user input. 
      * @param args Unused
      */
     public static void main(String[] args)
     {        
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        // Read from user input
+        Scanner reader = new Scanner(System.in);  
         System.out.println("This program computes the number of singular"
-            + "curves in |O(a,b)| on P^1*P^1");
+            + "curves of bi-degrees (a,b) on P^1*P^1");
         System.out.println("satisfy tangency conditions with a given line"
                 + " in |O(1,0)|.");
         System.out.println("Enter a:");        
@@ -117,157 +124,190 @@ public class F0table {
         System.out.println("Enter the max number of (arithmetic genus"
             + "- geometric genus):");        
         System.out.println("maxNode = ");
-        int inputmaxNode = reader.nextInt();        
+        int inputMaxNode = reader.nextInt();        
         System.out.format("The output will be written in the directory" + 
-                           "../output/F0\n");
-        reader.close();
-                 
-        F0table f0Table = new F0table(inputa, inputb, inputmaxNode);
+                           "../output/F0 and ../output/genF0\n");
+        reader.close();                 
+        F0table f0Table = new F0table(inputa, inputb, inputMaxNode);
         f0Table.compute();        
     }    
     /** 
-     * Run this method to compute and create output files.  
+     * Put N(O(i ,b), r, alpha and beta) into dictionary 
+     * for given i = 0,...,a,  r = 0,...,maxNode and all valid (alpha, beta).
+     * If i >= a - printLast, write the result in the output file.  
      */
     public void compute() {
         // Here we put N(O(i, b), all valid alpha and beta) into dictionary
-        for (int i = 0; i <= a - printLast; i++) {
+        for (int i = 0; i <= a; i++) {
             System.out.println("Computing a = " + i);
-            prevMap = curMap;
-            curMap = new HashMap<ArrayList<Integer>, Long>();
-            // Compute N and put in the table           
-            for (int g = MyF.g_a(i, b) - maxNode; g <= MyF.g_a(i, b); g++) {
-                for (int j = b; j >= 0; j--) {
-                    for (byte[] alpha : parArr.get(j)) {
-                        for (byte[] beta : parArr.get(b - j)) {
-                            curMap.put(Key.make(g, alpha, beta), 
-                                N(i, b, g, alpha, beta));
+            prevMap = curSave;
+            curSave = new HashMap<ArrayList<Byte>, BigInteger>();
+            curDump = new HashMap<ArrayList<Byte>, BigInteger>();
+            if (i <= b - printLast) {
+                // Compute N and put in the table  
+                // cur is a working dictionary. First is curDump then curSave
+                HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
+                for (int g = MyF.g_a(i, b) - maxNode; 
+                    g <= MyF.g_a(i, b); g++) {
+                    for (int j = b; j >= 0; j--) {
+                        // If j > maxNode then next beta will be negative. 
+                        // by b - j = Ibeta' >= |beta| - r + b so these
+                        // numbers will not be used again for bigger degree.
+                        if (j <= maxNode) { cur = curSave; }
+                        for (byte[] alpha : parArr.get(j)) {
+                            for (byte[] beta : parArr.get(b - j)) {
+                            cur.put(Key.make(g, alpha, beta), 
+                                N(i, g, alpha, beta));
+                            }
                         }
                     }
                 }
-            }                   
+            }   
+            else {
+            }
         }       
         // Here we put N(O(i, b), all valid alpha and beta) into dictionary
         // and write output file
         for (int i = Math.max(a - printLast + 1, 0); i <= a; i++) {
             System.out.println("Computing a = " + i);
-            prevMap = curMap;
-            curMap = new HashMap<ArrayList<Integer>, Long>();
+            prevMap = curSave;
+            curDump = new HashMap<ArrayList<Byte>, BigInteger>();
             for (int g = MyF.g_a(i, b) - maxNode; g <= MyF.g_a(i, b); g++) {
                 if (i == a) { 
-                    curMap = new HashMap<ArrayList<Integer>, Long>();
+                    curDump = new HashMap<ArrayList<Byte>, BigInteger>();
+                    curSave = new HashMap<ArrayList<Byte>, BigInteger>();
                 }
-                try {
-                    File outputfile = new File("output/F0/O("
-                            + i + ", " + b + ")_g=" + g + ".txt");  
-                    File genFun = new File("output/genFunF0/O("
-                            + i + ", " + b + ")_g=" + g + ".txt");         
-                    outputfile.getParentFile().mkdirs();
-                    genFun.getParentFile().mkdirs();
-                    PrintWriter pw = new PrintWriter(outputfile, "UTF-8"); 
-                    PrintWriter gen = new PrintWriter(genFun, "UTF-8");
-                    for (int j = b; j > 4; j--) {
-                        for (byte[] alpha : parArr.get(j)) {
-                            for (byte[] beta : parArr.get(b - j)) {
-                                long ansN = N(i, b, g, alpha, beta);
-                                curMap.put(Key.make(i, b, g, alpha, beta), ansN);
-                                pw.printf("N(O(%d, %d), %d, %s, %s) = %d\n", 
-                                    i, b, g, MyF.str(alpha), MyF.str(beta), ansN);
-                            }
-                        }    
-                    }
-                    for (int j = Math.min(4, b); j >= 0; j--) {
-                        for (byte[] alpha : parArr.get(j)) {
-                            gen.println("alpha = " + MyF.str(alpha));
-                            for (byte[] beta : parArr.get(b - j)) {
-                                long ansN = N(i, b, g, alpha, beta);
-                                curMap.put(Key.make(i, b, g, alpha, beta), ansN);
-                                pw.printf("N(O(%d, %d), %d, %s, %s) = %d\n", 
-                                       i, b, g, MyF.str(alpha), MyF.str(beta), ansN);
-                                if (b - j - beta[0] <= wDeg) {
-                                    gen.printf(ansN + MyF.toVar(beta) + "+");
-                                }      
-                            }
-                            gen.println("\n");
-                        }    
-                    }
-                    pw.close();
-                    gen.close();
-                } 
-                catch (IOException e) {
-                    System.out.println("There is an error in I/O.");
-                }                                     
+                                                    
             }                
         }    
+    }
+    /** Write to output files and put results in dictionary.
+     * @param d the working degree
+     * @param r the working number of nodes
+     */
+    private void output(int i, int b, int g) {
+        try {
+            String name = String.format("O(%d, %d)_g=%d.txt", i, b, g);
+            File outputfile = new File("../output/F0/" + name);  
+            File genFun = new File("../output/genFunF0/" + name);         
+            outputfile.getParentFile().mkdirs();
+            genFun.getParentFile().mkdirs();
+            PrintWriter num = new PrintWriter(outputfile, "UTF-8"); 
+            PrintWriter gen = new PrintWriter(genFun, "UTF-8");
+            HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
+            for (int j = b; j >= 0; j--) {
+                if (j <= maxNode) { cur = curSave; }
+                for (byte[] alpha : parArr.get(j)) {
+                    if (j <= 4) { 
+                        gen.println("\n");
+                        gen.println("alpha = " + MyF.str(alpha));
+                    } 
+                    for (byte[] beta : parArr.get(b - j)) {
+                        BigInteger ansN = N(i, g, alpha, beta);
+                        cur.put(Key.make(g, alpha, beta), ansN);
+                        num.printf("N(O(%d, %d), %d, %s, %s) = %d\n", 
+                             i, b, g, MyF.str(alpha), MyF.str(beta), ansN);
+                        if (j <= 4 && b - j - beta[0] <= wDeg) {
+                            gen.printf(ansN + MyF.toVar(beta) + "+");
+                        }            
+                    }
+                }    
+            }
+            num.close();
+            gen.close();
+        } 
+        catch (IOException e) {
+              System.out.println("There is an error in I/O.");
+        } 
     }
     /** 
      * The recursive formula is implemented here. 
      */
-    private long N(int aa, int bb, int g, byte[] alpha, byte[] beta) {      
-        // invalid parameters
-        if (arrOP.I(alpha) + arrOP.I(beta) != b  || aa < 0 || bb < 0) {
-            return 0;             
+    private BigInteger N(int aa, int g, byte[] alpha, byte[] beta) {      
+        // invalid inputs
+        if (arrOp.I(alpha) + arrOp.I(beta) != b  || aa < 0) {
+            return BigInteger.ZERO;             
         }
         // Base case. Only fiber class passing through points. 
         // from the beginning of Section 8. 
-        else if (aa == 0 && arrOP.I(beta) == 0) { 
-            if (alpha[0] == arrOP.sum(alpha) && g == 1 - bb ) {
-                return 1;    
+        else if (aa == 0 && arrOp.I(beta) == 0) { 
+            if (alpha[0] == arrOp.sum(alpha) && g == 1 - b ) {
+                return BigInteger.ONE;    
             }
             else {
-                return 0;
+                return BigInteger.ZERO;
             }
         } 
         BigInteger ans = BigInteger.ZERO; 
-        for (int k = 0; k < maxLength; k++) {    // the first term
+        // the first term
+        for (int k = 0; k < b; k++) {    
             if (beta[k] > 0) {
-                byte[] tempAlpha = alpha.clone();
-                byte[] tempBeta = beta.clone();
-                //alpha_+e_k, beta-e_k
-                tempAlpha[k] = alpha[k] + 1;
-                tempBeta[k] = beta[k] - 1;  
-                ArrayList<Integer> key = Key.make(aa, bb, g, tempAlpha, tempBeta);
-                if (curMap.containsKey(key)) {
-                    if (curMap.get(key) == -1) return -1;
-                    ans = ans.add(BigInteger.valueOf((k + 1) * curMap.get(key)));
-                }
-                else 
-                    System.out.format("N(%d, %d, %d, %s, %s) can't be found.\n",
-                          aa, bb, g, MyF.str(tempAlpha), MyF.str(tempBeta));
+                ans = ans.add(first(aa, g, alpha, beta, k));
             }                
-        }        
+        }
+        // the second term
         if (aa > 0) {                              // the second term
-            for (int j = arrOP.sum(beta) - MyF.g_a(aa, bb) + g + b; j <= bb; j++) {
+            for (int j = arrOp.sum(beta) - MyF.g_a(aa, b) + g + b; j <= b; j++) {
                 for (byte[] bP : parArr.get(j)) {
-                    for (byte[] aP : parArr.get(bb - j)) {
-                        if (arrOP.greater(alpha, aP) && arrOP.greater(bP, beta)) {
-                            byte[] gamma = arrOP.substract(bP, beta);
-                            int gP = g - arrOP.sum(gamma) + 1;
-                            if (gP <= MyF.g_a(aa - 1, bb) && gP >= MyF.g_a(aa - 1, bb) - maxNode) {
-                                ArrayList<Integer> key = Key.make(aa - 1, bb, gP, aP, bP);
-                                if (prevMap.containsKey(key)) {
-                                    if (prevMap.get(key) == -1) {   //already overflow
-                                        return -1;
-                                    }
-                                    BigInteger temp = MyF.prod(prevMap.get(key), arrOP.J(gamma),
-                                         arrOP.binom(alpha, aP), arrOP.binom(bP, beta));
-                                    ans = ans.add(temp);                                    
-                                }
-                                else { // Table doesn't contain this term
-                                    System.out.format("Finding N(%d, %d, %d, %s, %s)\n",
-                                        aa, bb, g, MyF.str(alpha), MyF.str(beta));
-                                    System.out.format("N(%d, %d, %d, %s, %s) can't be found.\n", 
-                                        a - 1, bb, gP, MyF.str(aP), MyF.str(bP));
-                                }
-                            }
-                        }    
+                    for (byte[] aP : parArr.get(b - j)) {
+                        ans = ans.add(second(aa, g, alpha, beta, aP, bP));                        
                     }
                 }                
             }
         }    
-        if (ans.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
-            return -1;
+        return ans;        
+    }  
+    /** 
+     * Computes a single term in the first term
+     */
+    private BigInteger first(int i, int g, byte[] alpha, byte[] beta, 
+                                int k) {            
+        byte[] tempAlpha = alpha.clone();
+        byte[] tempBeta = beta.clone();
+        //alpha_+e_k, beta-e_k
+        tempAlpha[k] = (byte) (alpha[k] + 1);  
+        tempBeta[k] = (byte) (beta[k] - 1);    
+        ArrayList<Byte> key = Key.make(g, tempAlpha, tempBeta);
+        if (curSave.containsKey(key)) {
+            return curSave.get(key).multiply(BigInteger.valueOf(k + 1));
         }
-        else return ans.longValue();        
-    }                        
-}    
+        else if (curDump.containsKey(key)) {
+            return curDump.get(key).multiply(BigInteger.valueOf(k + 1));
+        }
+        else {
+            System.out.format("Finding N(%d, %d, %d, %s, %s)\n", 
+                i, b, g, MyF.str(alpha), MyF.str(beta));
+            System.out.format("N(%d, %d, %d, %s, %s) can't be found.\n", 
+                i, b, g, MyF.str(tempAlpha), MyF.str(tempBeta));
+        }
+        return BigInteger.ZERO;  
+    }       
+    /** 
+     *  Computes a single term in the second term
+     */
+    private BigInteger second(int aa, int g, byte[] alpha, byte[] beta, 
+                      byte[] aP, byte[] bP) {
+        if (arrOp.greater(alpha, aP) && arrOp.greater(bP, beta)) {
+            byte[] gamma = arrOp.substract(bP, beta);
+            int gP = g - arrOp.sum(gamma) + 1;
+            // no need to check gP >= MyF.g_a(aa - 1, b) - maxNode since
+            // it's proven.
+            if (gP <= MyF.g_a(aa - 1, b)) {                
+                ArrayList<Byte> key = Key.make(gP, aP, bP);
+                if (prevMap.containsKey(key)) {
+                    BigInteger coeff = MyF.prod(arrOp.J(gamma),  
+                         arrOp.binom(alpha, aP), arrOp.binom(bP, beta));
+                    return coeff.multiply(prevMap.get(key));
+                }
+                else { // Table doesn't contain this term
+                    System.out.format("Finding N(%d, %d, %d, %s, %s)\n",
+                        aa, b, g, MyF.str(alpha), MyF.str(beta));
+                    System.out.format("N(%d, %d, %d, %s, %s) can't be found.\n", 
+                        aa - 1, b, gP, MyF.str(aP), MyF.str(bP));
+                }              
+            }
+        }
+        return BigInteger.ZERO;
+    }    
 
+}    
