@@ -1,27 +1,54 @@
+import static java.lang.Math.*;
 /**
- * The Complexity class is a simple tool to compute the complexity of the 
- * CH class as O(d, r). 
+ * The Complexity class is a simple tool to compute the true and estimated 
+ * time and space complexity of the CH class. 
  * <p>
  * @author Yu-jong Tzeng
- * @version 2.0
- * @since Feb. 25, 2020.
+ * @version 2.1
+ * @since May. 21, 2020.
  */
-import static java.lang.Math.*;
 public class Complexity
 {
-    public int[] parN = {1, 1, 2, 3, 5, 7, 11, 15, 22, 30, 42,  //0-10
-        56, 77, 101, 135, 176, 231, 297, 385, 490, 627,         //11-20
-        792, 1002, 1255, 1575, 1958, 2436, 3010, 3718, 4565, 5604,//21-30
-        6842, 8349, 10143, 12310, 14883, 17977, 21637, 26015, 31185, 37338, //31-40
-        44583, 53174, 63261, 75175, 89134, //41-45
-        105558, 124754, 147273, 173525, 204226}; //46-50
-    public int length = parN.length;   
-    public long[] numN = new long[length];
-    public long[] space = new long[length];
-    public long[] time =  new long[length];
-    private ArrayOp arrOP = new ArrayOp(length);  
-    public long count = 0;
-    Partitions parArr = new Partitions(length); 
+    /**  parN[n] is the number of integer partitions of n. */
+    public static int[] parN;
+    private static int length;
+    /** 
+     * numN[d] is the number of Caparaso-Harris invariants N(d,r,alpha, beta)
+     * for any fixed r, which is the number of (alpha, beta) satisfying 
+     * I(alpha) + I(beta) = d.
+     */
+    public static long[] numN = new long[length];
+    /**
+     * space[d] is the number of keys in dictionaries at stage d. Multiplying 
+     * by a constant is the space complexity of deg = d and maxNode ??. 
+     */
+    public static long[] space = new long[length];
+    /**
+     * time[d] is the time complexity for deg = d and maxNode ??.
+     */
+    public static long[] time =  new long[length];
+    private static long count = 0;
+    private static ArrayOp arrOP; 
+    private static Partitions parArr;
+    public Complexity () {    
+        parN = new int[] {1, 1, 2, 3, 5, 7, 11, 15, 22, 30, 42,  //0-10
+            56, 77, 101, 135, 176, 231, 297, 385, 490, 627,         //11-20
+            792, 1002, 1255, 1575, 1958, 2436, 3010, 3718, 4565, 5604, //21-30
+            6842, 8349, 10143, 12310, 14883,  // 31-35
+            17977, 21637, 26015, 31185, 37338, //36-40
+            44583, 53174, 63261, 75175, 89134, //41-45
+            105558, 124754, 147273, 173525, 204226}; //46-50*/
+        length = parN.length;  
+        numN = new long[length];
+        space = new long[length];
+        time =  new long[length];
+        ArrayOp arrOP = new ArrayOp(length); 
+        Partitions parArr = new Partitions(length);
+        count = 0;
+    }   
+    /**
+     * @param deg The max degree.  
+     */ 
     public void calculate(int deg) {
         if (deg > length) {
             System.out.println("deg can not be greater than " + length);
@@ -55,6 +82,9 @@ public class Complexity
             time[d] = count;
         }                                 
     }
+    /**
+     * Compute the numbr of operations for the N method in CH by simulation. 
+     */
     private void N(int d, int r, byte[] alpha, byte[] beta) {  
         count++;
         for (int k = 0; k < beta.length; k++) { // the first term
@@ -68,24 +98,41 @@ public class Complexity
             }
         }                   
     }
-    //calculate the estimated partition function
+    /**
+     * @param deg The maximal degree. 
+     * @return the estimated partition function for degree deg.
+     */
     public double eP(int deg) {
-        return 1.0/4/deg/sqrt(3)*exp(PI*sqrt(2.0*deg/3));
+        return 1.0 / 4 / deg / sqrt(3) * exp(PI * sqrt(2.0 * deg / 3));
     }
-    //calculate the estimated Number of CH invariants for fixed deg, delta
+    /**
+     * @param deg The maximal degree.
+     * @return the estimated number of CH invariants for fixed deg, delta.  
+     */  
     public double eNum(int deg) {
-        return 1.0/48/deg*exp(2*PI*sqrt(deg/3.0));
+        return 1.0 / 48 / deg * exp(2 * PI * sqrt(deg / 3.0));
     }
-    //calculate the estimated Space of HashMaps in CH.java
+    /**
+     * @param deg The maximal degree.
+     * @return the estimated number of keys in HashMaps in the CH class for 
+     * degree deg.
+     */
     public double eSpace(int deg) {
-        return 1.0/24/deg*exp(2*PI*sqrt(deg/3.0));
+        return 1.0 / 24 / deg * exp(2 * PI * sqrt(deg / 3.0));
     }
-    //calculate the estimated Running Time for CH.java
+    /**
+     * @param deg The maximal degree.
+     * @return the estimated running time for the CH class for degree deg.
+     */
     public double eTime(int deg) {
-        return deg*deg*deg*exp(PI*sqrt(8.0*deg/3));
+        return deg * deg * deg * exp(PI * sqrt(8.0 * deg / 3));
     }
-    //calculate the estimated Running Time for naive CH formula (delta = 4)
+    /**
+     * @param deg The maximal degree.
+     * @return the estimated running time for naive CH formula for degree deg
+     * and delta = 4.
+     */
     public double naive(int deg) {
-        return deg*5*exp(4*PI*sqrt(deg/3.0))/48/48;
+        return deg * 5 * exp(4 * PI * sqrt(deg / 3.0)) / 48 / 48;
     }
 }
