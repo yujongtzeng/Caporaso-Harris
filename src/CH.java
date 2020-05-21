@@ -10,16 +10,14 @@ import java.math.BigInteger;
 /**
  * <p>
  * This CH class implements the recursive formula of Caporaso-Harris in 
- * the article "Counting plane curves of any genus" which can be used to 
- * find the number of r-nodal curves on the projective plane of any degree
- * d and r. We will follow the notation in Section 1.1 of the article as 
- * much as possible.
+ * the article "Counting plane curves of any genus". The formula computes 
+ * the number of r-nodal curves on the projective plane satisfying given  
+ * tangency conditions of any degree d and r. We will follow the notation in  
+ * Section 1.1 of the article as much as possible.
  * <p>
  * Users will be prompted to enter two integers: the maximal degree and 
- * the maximal number 
- * of nodes for the curves in concern. <br>
- * 
- * The program will print two kinds of computation results in txt files:
+ * the maximal number of nodes for the curves in concern.
+ * The program will print two kinds of computation results to txt files:
  * numbers of nodal curves line by line and generating series. 
  * <p>
  * The first kind of files contain the number of degree d curves on the 
@@ -27,7 +25,7 @@ import java.math.BigInteger;
  * (d-1)*(d-2)/2 - r)
  * which satisfy tangency conditions (alpha, beta) with a given line for  
  * <br>
- * 1) d = the biggest 5 positive integers less or equal to max degree 
+ * 1) d = the biggest 5 positive integers less or equal to maximal degree 
  *    (5 is the default number and can be changed by modifying the instance 
  *    variable printLast), <br>  
  * 2) all nonnegative integers r less or equal to max number of nodes, <br>   
@@ -38,44 +36,57 @@ import java.math.BigInteger;
  * beta : tangency conditions at unassigned points. 
  * beta = (beta_1, beta_2,....).
  * <p> 
- * The output numbers will be located at output/CH and be split according to 
- * degree and the number of nodes. 
+ * These output numbers will be located at ../output/CH and be split     
+ * according to the degree and number of nodes. 
  * <p>
  * The second kind of files contain the generating series of those numbers. 
  * Define the generating series on the projective plane P^2 and line
  * bundle O(d) to be <br>
  * T_{alpha}(P^2, O(d), line) = \sum_{r, beta} N(d, r, alpha, beta) z^r 
  * b^{beta_2} c^{beta_3} d^{beta_4}....<br>
- * Define the degree and weighted degree of a monomial to be <br>
- * degree(z^r b^{beta_2} c^{beta_3} d^{beta_4}....) = r + b + c + d... <br>
+ * Define the weighted degree of a monomial to be <br>
  * wdegree(z^r b^{beta_2} c^{beta_3} d^{beta_4}....) = 2*b + 3*c + 4*d...<br>
- * All terms in the generating series satisfying total degree <= 5 and 
- * weighted degree <= 10 will be written in files at output/genFunCH. <br>
- * The number of terms in ourput can be modified but the length of tangency 
- * conditions must <=25. 
  * <p>
+ * The output will contain T_{alpha} for every I(alpha) <= 4.
+ * In each T_{alpha}, those terms with weighted degree less or equal to 10  
+ * will be printed out. 
+ * These generating series will be written in files at ../output/genCH. 
+ * The z^r terms are omitted in the output files since it's the same for all 
+ * series in the same file. Please multiply by z^r manually. 
+ * <br>
+ * The number of terms in output can be modified but the highest tangency 
+ * multiplicity must be less than 26.  
+ * <p>
+ * 
  * Notes on algorithm: <br>
  * This class and F0Table use the same algorithm. 
+ * <p>
+ * alpha and beta are stored by byte arrays. The length of them (and 
+ * variations) are of fixed length d. The bound is from the maxLength of 
+ * alpha, alpha', beta, beta' <= d. 
+ * All methods in arrayOp will check if the length of inputs equals d. 
+ * 
  * @author Yu-jong Tzeng
  * @version 3.1
- * @since May 20, 2020.
+ * @since May 21, 2020.
  */
 
 public class CH {
     private static int deg;
     private static int maxNode;
-    private static ArrayOp arrOP;   
+    private static ArrayOp arrOp;   
     /**
-     * The number of top degrees which will be printed out. 
-     * The output will will contain CH invariants for d = 
+     * The number of top degrees of the curve classes which will be printed    
+     * out. 
+     * The output will will contain number of nodal curves of degrees d = 
      * (maxNode -printLast +1) to maxNode. 
      */
     public static int printLast;  
     // wDeg is the bound of weight degree of output monomial 
     private static int wDeg;  
     // The computation will start from degree 1 to deg one by one. 
-    // At stage d, prevMap contains results of degree d - 1
-    // curSav contains results of d which will possibly be used for d + 1
+    // At stage d, prevMap: results of degree d - 1 from last curSave
+    // curSave contains results of d which will possibly be used for d + 1
     // curDump contains results of d which won't be used for d + 1
     // When a new stage starts, prevMap = curSave and curDump is empty
     private HashMap<ArrayList<Byte>, BigInteger> prevMap;
@@ -90,7 +101,7 @@ public class CH {
     public CH (int deg, int maxNode) {
         this.deg = deg;
         this.maxNode = maxNode; 
-        arrOP = new ArrayOp(deg);
+        arrOp = new ArrayOp(deg);
         parArr = new Partitions(deg);
         printLast = 5;
         wDeg = 10;        
@@ -121,9 +132,8 @@ public class CH {
         ch.compute();
     }    
     /** 
-     * Put N(O(d), r, alpha and beta) into dictionary 
-     * for given d = 1,...,deg, r = 0,...,maxNode and all valid (alpha, beta).
-     * If d >= deg - printLast, write the result in the output file. 
+     * Compute all N(d, r, alpha and beta) in the specified range and 
+     * generate output. 
      */
     public void compute() {
         for (int d = 1; d <= deg; d++) {
@@ -132,12 +142,12 @@ public class CH {
             curSave = new HashMap<ArrayList<Byte>, BigInteger>();  
             curDump = new HashMap<ArrayList<Byte>, BigInteger>();   
             if (d <= deg - printLast) {
-                // Only compute N and put in dictionary
+                // Only compute N and put in the dictionary
                 // cur is a working dictionary. First is curDump then curSave
                 HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
                 for (int r = 0, j = d; r <= maxNode && j >= 0; r++, j--) {
                     // If j > maxNode then next beta will be negative. 
-                    // by d - 1 - j = Ibeta' >= |beta| - r + d - 1 so these
+                    // by d - 1 - j = I(beta') >= |beta| - r + d - 1 so these
                     // numbers will not be used again for bigger degree.
                     if (j <= maxNode) { cur = curSave; }
                     for (byte[] alpha : parArr.get(j)) {
@@ -168,10 +178,9 @@ public class CH {
      */
     private void output(int d, int r) {
         try {
-            String fileCH = String.format("../output/CH/O(%d)_r=%d.txt", d, r);
-            String fgen = String.format("../output/genCH/O(%d)_r=%d.txt", d, r);
-            File outputfile = new File(fileCH);
-            File genFun = new File(fgen); 
+            String fname = String.format("O(%d)_r=%d.txt", d, r);
+            File outputfile = new File("../output/CH/" + fname);  
+            File genFun = new File("../output/genCH/" + fname);      
             outputfile.getParentFile().mkdirs();
             genFun.getParentFile().mkdirs();
             PrintWriter num = new PrintWriter(outputfile, "UTF-8");
@@ -207,7 +216,7 @@ public class CH {
      */
     private BigInteger N(int d, int r, byte[] alpha, byte[] beta) {  
         //invalid inputs
-        if (arrOP.I(alpha) + arrOP.I(beta) != d) {
+        if (arrOp.I(alpha) + arrOp.I(beta) != d) {
             System.out.format("I(%s) + I(%s) must equal to %d\n", 
                                MyF.str(alpha), MyF.str(beta), d);
             return BigInteger.ZERO; 
@@ -232,7 +241,7 @@ public class CH {
             }
         }    
         // the second term
-        for (int j = Math.max(0, arrOP.sum(beta) - r + d - 1); j < d; j++) {
+        for (int j = Math.max(0, arrOp.sum(beta) - r + d - 1); j < d; j++) {
             for (byte[] bP : parArr.get(j)) {
                 for (byte[] aP : parArr.get(d - 1 - j)) {
                     ans = ans.add(second(d, r, alpha, beta, aP, bP));
@@ -245,8 +254,7 @@ public class CH {
      * Computes a single term in the first term
      */
     private BigInteger first(int d, int r, byte[] alpha, byte[] beta, 
-                                int k) {      
-        //now d >=2        
+                                int k) {            
         byte[] tempAlpha = alpha.clone();
         byte[] tempBeta = beta.clone();
         //alpha_+e_k, beta-e_k
@@ -272,16 +280,16 @@ public class CH {
      */
     private BigInteger second(int d, int r, byte[] alpha, byte[] beta, 
                       byte[] aP, byte[] bP) {
-        if (arrOP.greater(alpha, aP) && arrOP.greater(bP, beta)) {
-            byte[] gamma = arrOP.substract(bP, beta);
-            int rP = r + arrOP.sum(gamma) - d + 1;
+        if (arrOp.greater(alpha, aP) && arrOp.greater(bP, beta)) {
+            byte[] gamma = arrOp.substract(bP, beta);
+            int rP = r + arrOp.sum(gamma) - d + 1;
             // no need to check rP <= maxNode since 
             // r + |gamma| - d + 1 <= maxNode + |bP| -d + 1
             if (rP >= 0) {                
                 ArrayList<Byte> key = Key.make(rP, aP, bP);
                 if (prevMap.containsKey(key)) {
-                    BigInteger coeff = MyF.prod(arrOP.J(gamma),  
-                         arrOP.binom(alpha, aP), arrOP.binom(bP, beta));
+                    BigInteger coeff = MyF.prod(arrOp.J(gamma),  
+                         arrOp.binom(alpha, aP), arrOp.binom(bP, beta));
                     return coeff.multiply(prevMap.get(key));
                 }
                 else { // Table doesn't contain this term
