@@ -1,13 +1,16 @@
 #BlueJ class context
 comment0.target=Test
-comment0.text=\n\ The\ Test\ class\ runs\ pre-designed\ tests\ for\ CH\ and\ F0Table\ classes.\n\ It\ compares\ files\ in\ testFiles\ directory\ with\ program\ outputs\ line\ \n\ by\ line.\ \n\ If\ there\ are\ mismatchs,\ the\ difference\ will\ be\ printed\ out.\n\ @author\ Yu-jong\ Tzeng\n\ @version\ 1.0\n\ @since\ May\ 19,\ 2020.\n
+comment0.text=\n\ The\ Test\ class\ runs\ pre-designed\ tests\ for\ CH\ and\ F0table\ classes.\n\ It\ compares\ files\ in\ testFiles\ directory\ with\ program\ outputs\ line\ \n\ by\ line.\ \n\ If\ there\ are\ mismatchs,\ the\ difference\ will\ be\ printed\ out.\n\ <p>\n\ It\ will\ run\ tests\ for\ CH\ class\ with\ (deg,\ maxNode)\ \=\ (6,\ 15),\ (10,\ 4)\ and\ \n\ tests\ for\ F0table\ class\ for\ (a,\ b,\ maxNode)\ \=\ (10,\ 1,\ 3),\ (4,\ 2,\ 3),\ \n\ (6,\ 3,\ 7)\ and\ (4,\ 4,\ 10).\ \n\ This\ tests\ covers\ all\ numbers\ previously\ compute\ in\ Caporaso-Harris'\ paper\n\ "Counting\ plane\ curves\ of\ any\ genus"\ p.5-6\ and\ in\ Vakil's\ paper\ "Counting\ \n\ curves\ on\ rational\ surfaces"\ p.75\ for\ P^1*P^1.\n\n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.0\n\ @since\ May\ 21,\ 2020.\n
 comment1.params=args
 comment1.target=void\ main(java.lang.String[])
 comment1.text=\n\ Run\ this\ method\ without\ argument\ will\ start\ the\ tests.\n\ @param\ args\ unused\n
 comment2.params=maxdeg\ delta
 comment2.target=void\ testCH(int,\ int)
-comment2.text=\n\ Outlne\ the\ comparison\ between\ files.\n
-comment3.params=file1\ file2
-comment3.target=java.lang.Boolean\ compare(java.io.File,\ java.io.File)
-comment3.text=\n\ Print\ the\ difference\ of\ two\ files.\ Return\ True\ if\ the\ two\ files\n\ have\ different\ number\ of\ lines.\ \n
-numComments=4
+comment2.text=\n\ Output\ the\ comparison\ between\ test\ files\ and\ output\ files\ of\ CH.\n
+comment3.params=a\ b\ maxNode
+comment3.target=void\ testF0(int,\ int,\ int)
+comment3.text=\n\ Output\ the\ comparison\ between\ test\ files\ and\ output\ files\ of\ F0table.\n
+comment4.params=file1\ file2
+comment4.target=java.lang.Boolean\ compare(java.io.File,\ java.io.File)
+comment4.text=\n\ Print\ the\ difference\ of\ two\ files.\ Return\ True\ if\ the\ two\ files\n\ have\ different\ number\ of\ lines.\ \n
+numComments=5
