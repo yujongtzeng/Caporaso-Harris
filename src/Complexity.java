@@ -30,6 +30,9 @@ public class Complexity
     private static long count = 0;
     private static ArrayOp arrOP; 
     private static Partitions parArr;
+    /**
+     * Construct the complexity class and declare instance variables. 
+     */
     public Complexity () {    
         parN = new int[] {1, 1, 2, 3, 5, 7, 11, 15, 22, 30, 42,  //0-10
             56, 77, 101, 135, 176, 231, 297, 385, 490, 627,         //11-20
@@ -42,11 +45,12 @@ public class Complexity
         numN = new long[length];
         space = new long[length];
         time =  new long[length];
-        ArrayOp arrOP = new ArrayOp(length); 
-        Partitions parArr = new Partitions(length);
+        arrOP = new ArrayOp(length); 
+        parArr = new Partitions(length);
         count = 0;
     }   
     /**
+     * Compute the instance variables to the given degree.
      * @param deg The max degree.  
      */ 
     public void calculate(int deg) {

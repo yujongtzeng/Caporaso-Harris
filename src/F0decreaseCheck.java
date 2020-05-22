@@ -28,14 +28,14 @@ import java.util.Scanner;
  * 
  * @author Yu-jong Tzeng
  * @version 2.0
- * @since August 24, 2019.
+ * @since May 22, 2019.
  */
 public class F0decreaseCheck {  
     private static int a;
     private static int b;         
     private static int gdiff;
     private static int maxLength;
-    private static ArrayOp arrOP;
+    private static ArrayOp arrOp;
     /**
      * The number of different first degrees of the curve class which will 
      * be printed out. 
@@ -59,7 +59,7 @@ public class F0decreaseCheck {
         this.gdiff = gdiff;       
         maxLength = b;    
 
-        arrOP = new ArrayOp(maxLength);  
+        arrOp = new ArrayOp(maxLength);  
         parArr = new Partitions(b);
         prevMap = new HashMap<ArrayList<Byte>, Long>();
         curMap = new HashMap<ArrayList<Byte>, Long>();
@@ -132,13 +132,13 @@ public class F0decreaseCheck {
     private long N(int aa, int bb, int g, byte[] alpha, byte[] beta) {
         long ans = 0 ;        
         // invalid parameters
-        if (arrOP.I(alpha) + arrOP.I(beta) != b  || aa < 0 || bb < 0) {
+        if (arrOp.I(alpha) + arrOp.I(beta) != b  || aa < 0 || bb < 0) {
             return 0;             
         }
         // Base case. Only fiber class passing through points. 
         // from the beginning of Section 8. 
-        else if (aa == 0 && arrOP.I(beta) == 0) { 
-            if (alpha[0] == arrOP.sum(alpha) && g == 1 - bb ) {
+        else if (aa == 0 && arrOp.I(beta) == 0) { 
+            if (alpha[0] == arrOp.sum(alpha) && g == 1 - bb ) {
                 return 1;    
             }
             else {
@@ -161,16 +161,16 @@ public class F0decreaseCheck {
             }                
         }        
         if (aa > 0) {                              // the second term
-            for (int j = arrOP.sum(beta) - MyF.g_a(aa, bb) + g + b; j <= bb; j++) {
+            for (int j = arrOp.sum(beta) - MyF.g_a(aa, bb) + g + b; j <= bb; j++) {
                 for (byte[] bP : parArr.get(j)) {
                     for (byte[] aP : parArr.get(bb - j)) {
-                        if (arrOP.greater(alpha, aP) && arrOP.greater(bP, beta)) {
-                            byte[] gamma = arrOP.substract(bP, beta);
-                            int gP = g - arrOP.sum(gamma) + 1;
+                        if (arrOp.greater(alpha, aP) && arrOp.greater(bP, beta)) {
+                            byte[] gamma = arrOp.substract(bP, beta);
+                            int gP = g - arrOp.sum(gamma) + 1;
                             if (gP <= MyF.g_a(aa - 1, bb) && gP >= MyF.g_a(aa - 1, bb) - gdiff) {
                                 if (prevMap.containsKey(Key.make(gP, aP, bP))) {
-                                    long coeff = arrOP.J(gamma) * arrOP.binom(alpha, aP) 
-                                                 * arrOP.binom(bP, beta);
+                                    long coeff = arrOp.J(gamma) * arrOp.binom(alpha, aP) 
+                                                 * arrOp.binom(bP, beta);
                                     ans = ans + coeff * prevMap.get(Key.make(gP, aP, bP));
                                 }
                                 else { // Table doesn't contain this term

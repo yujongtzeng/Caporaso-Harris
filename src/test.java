@@ -14,10 +14,11 @@ import java.io.IOException;
  * This tests covers all numbers previously compute in Caporaso-Harris' paper
  * "Counting plane curves of any genus" p.5-6 and in Vakil's paper "Counting 
  * curves on rational surfaces" p.75 for P^1*P^1.
-
+ * 
+ * Note: this test only check when printLast = deg in CH and b in F0table.
  * @author Yu-jong Tzeng
  * @version 2.0
- * @since May 21, 2020.
+ * @since May 22, 2020.
  */
 public class Test
 {   

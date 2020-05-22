@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=CHdecreaseCheck
-comment0.text=\n\ <p>\n\ Let\ N(d,\ r,\ alpha,\ beta)\ be\ the\ number\ of\ r-nodal\ degree\ d\ curves\ on\n\ P^2\ which\ satisfy\ tangency\ conditions\ (alpha,\ beta)\ with\ a\ fixed\ \n\ line.\ \n\ CHdecreaseCheck\ is\ a\ program\ to\ check\ that\ for\ fixed\ d,\ r,\ beta,\ \n\ N(a,\ b,\ g,\ alpha,\ beta)\ is\ a\ non-increasing\ sequence\ in\ lexicographic\ \n\ order\ of\ alpha.\ \n\ If\ not,\ the\ counterexample\ will\ be\ printed\ out\ on\ the\ screen\ in\ the\ form\n\ "N(a,\ b,\ g,\ alpha,\ beta)\ >\ last"\ where\ last\ is\ the\ number\ right\ before.\ \n\ </p>\n\ \n\ deg\:\ the\ maximal\ degrees\ of\ the\ curve\ <br>\n\ maxNode\:\ \ max\ difference\ between\ the\ arithmetic\ genus\ and\ geometric\ genus\ of\ \n\ the\ curve\ the\ program\ will\ compute.\ \ <br>\n\ \n\ The\ program\ will\ check\ N(d,\ r,\ alpha,\ beta)\ for\ all\ d\ <\=\ deg,\ \n\ 0\ <\=\ r\ <\=\ maxNode,\ and\ all\ valid\ alpha\ and\ beta.\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.0\n\ @since\ August\ 25,\ 2019.\n
+comment0.text=\n\ <p>\n\ Let\ N(d,\ r,\ alpha,\ beta)\ be\ the\ number\ of\ r-nodal\ degree\ d\ curves\ on\n\ P^2\ which\ satisfy\ tangency\ conditions\ (alpha,\ beta)\ with\ a\ fixed\ \n\ line.\ \n\ CHdecreaseCheck\ is\ a\ program\ which\ checks\ that\ for\ fixed\ d,\ r,\ beta,\ \n\ N(a,\ b,\ g,\ alpha,\ beta)\ is\ a\ non-increasing\ sequence\ in\ lexicographic\ \n\ order\ of\ alpha.\ \n\ If\ not,\ the\ counterexample\ will\ be\ printed\ out\ on\ the\ screen\ as\n\ "N(a,\ b,\ g,\ alpha,\ beta)\ >\ last"\ where\ last\ is\ the\ number\ right\ before.\ \n\ </p>\n\ \n\ deg\:\ the\ maximal\ degrees\ of\ the\ curve\ <br>\n\ maxNode\:\ \ max\ difference\ between\ the\ arithmetic\ genus\ and\ geometric\ genus\ of\ \n\ the\ curve\ the\ program\ will\ compute.\ \ <br>\n\ \n\ The\ program\ will\ check\ N(d,\ r,\ alpha,\ beta)\ for\ all\ d\ <\=\ deg,\ \n\ 0\ <\=\ r\ <\=\ maxNode,\ and\ all\ valid\ alpha\ and\ beta.\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.0\n\ @since\ May\ 22,\ 2020.\n
 comment1.params=deg\ maxNode
 comment1.target=CHdecreaseCheck(int,\ int)
 comment1.text=\n\ The\ constructor\ of\ the\ class.\n\ @param\ deg\ The\ maximal\ degree\ of\ the\ curve.\ \n\ @param\ maxNode\ The\ maximal\ number\ of\ nodes\ of\ the\ curves\ in\ query.\n
@@ -11,6 +11,12 @@ comment3.params=
 comment3.target=void\ compute()
 comment3.text=\ \n\ Put\ N(O(d),\ r,\ alpha\ and\ beta)\ into\ dictionary\ \n\ for\ given\ d,\ r\ \=\ 0,...,maxNode\ and\ all\ valid\ alpha\ and\ beta.\n\ If\ d\ >\=\ deg\ -\ printLast,\ write\ the\ result\ in\ the\ output\ file.\ \n
 comment4.params=d\ r\ alpha\ beta
-comment4.target=long\ N(int,\ int,\ byte[],\ byte[])
+comment4.target=java.math.BigInteger\ N(int,\ int,\ byte[],\ byte[])
 comment4.text=\ \n\ The\ recursive\ formula\ is\ implemented\ here.\ \n
-numComments=5
+comment5.params=d\ r\ alpha\ beta\ k
+comment5.target=java.math.BigInteger\ first(int,\ int,\ byte[],\ byte[],\ int)
+comment5.text=\ \n\ Computes\ a\ single\ term\ in\ the\ first\ term\n
+comment6.params=d\ r\ alpha\ beta\ aP\ bP
+comment6.target=java.math.BigInteger\ second(int,\ int,\ byte[],\ byte[],\ byte[],\ byte[])
+comment6.text=\ \n\ \ Computes\ a\ single\ term\ in\ the\ second\ term\n
+numComments=7

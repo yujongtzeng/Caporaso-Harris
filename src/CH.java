@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
-import java.lang.StringBuilder; 
+//import java.lang.; 
 import java.math.BigInteger; 
 /**
  * <p>
@@ -145,15 +145,17 @@ public class CH {
                 // Only compute N and put in the dictionary
                 // cur is a working dictionary. First is curDump then curSave
                 HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
-                for (int r = 0, j = d; r <= maxNode && j >= 0; r++, j--) {
+                for (int r = 0; r <= maxNode; r++) {
                     // If j > maxNode then next beta will be negative. 
                     // by d - 1 - j = I(beta') >= |beta| - r + d - 1 so these
                     // numbers will not be used again for bigger degree.
-                    if (j <= maxNode) { cur = curSave; }
-                    for (byte[] alpha : parArr.get(j)) {
-                        for (byte[] beta : parArr.get(d - j)) {
-                            BigInteger ansN = N(d, r, alpha, beta);
-                            cur.put(Key.make(r, alpha, beta), ansN);
+                    for (int j = d; j >= 0; j--) {
+                        if (j <= maxNode) { cur = curSave; }
+                        for (byte[] alpha : parArr.get(j)) {
+                            for (byte[] beta : parArr.get(d - j)) {
+                                BigInteger ansN = N(d, r, alpha, beta);
+                                cur.put(Key.make(r, alpha, beta), ansN);
+                            }
                         }
                     }
                 }  
