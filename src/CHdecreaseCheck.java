@@ -1,9 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.io.PrintWriter;
-import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
 import java.math.BigInteger; 
 
@@ -33,15 +30,11 @@ import java.math.BigInteger;
 public class CHdecreaseCheck {
     private static int deg;
     private static int maxNode;
-    private static ArrayOp arrOp;   
-    /**
-     * The number of different degrees which will be printed out. 
-     * The output will will contain CH invariants for d = 
-     * (maxNode -printLast +1) to maxNode. 
-     */  
+    private static ArrayOp arrOp;  
+    private Partitions parArr; 
     private HashMap<ArrayList<Byte>, BigInteger> prevMap;
     private HashMap<ArrayList<Byte>, BigInteger> curMap;    
-    private Partitions parArr; 
+
     /**
     * The constructor of the class.
     * @param deg The maximal degree of the curve. 

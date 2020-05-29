@@ -9,7 +9,7 @@ comment2.target=void\ main(java.lang.String[])
 comment2.text=\ \n\ This\ method\ prompt\ for\ user\ input,\ create\ objects\ then\ call\ compute().\ \n\ Parameters\ a,\ b,\ and\ maxNode\ are\ initialized\ by\ user\ input.\ \n\ @param\ args\ Unused\n
 comment3.params=
 comment3.target=void\ compute()
-comment3.text=\ \n\ Compute\ all\ N(i\ ,b,\ g,\ alpha\ and\ beta)\ in\ the\ specified\ range.\ \n\ If\ i\ >\=\ a\ -\ printLast,\ write\ the\ result\ in\ the\ output\ files.\ \ \n
+comment3.text=\ \n\ Compute\ all\ N(i\ ,b,\ g,\ alpha\ and\ beta)\ in\ the\ specified\ range\ and\ \n\ generate\ output.\ \n
 comment4.params=i\ g
 comment4.target=void\ output(int,\ int)
 comment4.text=\ Write\ to\ output\ files\ and\ put\ results\ in\ dictionary.\n\ @param\ i\ the\ working\ degree\n\ @param\ g\ the\ working\ number\ of\ nodes\n

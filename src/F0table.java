@@ -131,8 +131,8 @@ public class F0table {
         f0Table.compute();        
     }    
     /** 
-     * Compute all N(i ,b, g, alpha and beta) in the specified range. 
-     * If i >= a - printLast, write the result in the output files.  
+     * Compute all N(i ,b, g, alpha and beta) in the specified range and 
+     * generate output. 
      */
     public void compute() {
         // Here we put N(O(i, b), all valid alpha and beta) into dictionary
@@ -141,20 +141,22 @@ public class F0table {
             prevMap = curSave;
             curSave = new HashMap<ArrayList<Byte>, BigInteger>();
             curDump = new HashMap<ArrayList<Byte>, BigInteger>();
-            if (i <= b - printLast) {
+            if (i <= a - printLast) {
                 // Compute N and put in the dictionary
                 // cur is a working dictionary. First is curDump then curSave
                 HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
-                for (int g = MyF.g_a(i, b) - maxNode, j = b; 
-                    g <= MyF.g_a(i, b) && j >= 0 ; g++, j--) {
-                    // If j > maxNode then next beta will be negative. 
-                    // because b - j = I(beta') >= |beta| - r + b so these
-                    // numbers will not be used again for bigger degree.
-                    if (j <= maxNode) { cur = curSave; }
-                    for (byte[] alpha : parArr.get(j)) {
-                        for (byte[] beta : parArr.get(b - j)) {
-                            cur.put(Key.make(g, alpha, beta), 
-                                N(i, g, alpha, beta));
+                for (int g = MyF.g_a(i, b) - maxNode; 
+                    g <= MyF.g_a(i, b); g++) {
+                    for (int j = b; j >= 0; j--) {
+                        // If j > maxNode then next beta will be negative. 
+                        // because b - j = I(beta') >= |beta| - r + b so these
+                        // numbers will not be used again for bigger degree.
+                        if (j <= maxNode) { cur = curSave; }
+                        for (byte[] alpha : parArr.get(j)) {
+                            for (byte[] beta : parArr.get(b - j)) {
+                                cur.put(Key.make(g, alpha, beta), 
+                                    N(i, g, alpha, beta));
+                            }
                         }
                     }
                 }

@@ -5,297 +5,337 @@ import java.io.PrintWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
-
+import java.math.BigInteger; 
 /**
- * This HirTable class uses dynamic programming approach to implement the 
- * recursive formula of Vakil in "Counting curves on rational surfaces" to 
- * compute the number of singular curves on Hirzebruch surfaces F_n which 
- * satisfy tangency conditions with the divisor E = h-nf.
  * <p>
- * The user needs to enter n, a, b and gdiff. 
- *  <p>
- * n : The Hirzebruch surface is F_n. <br />
+ * The HirTable class uses dynamic programming approach to implement the 
+ * recursive formula of Vakil in "Counting curves on rational surfaces". 
+ * The formula computes the number of singular curves on Hirzebruch surfaces 
+ * F_n  which satisfy given tangency conditions with with the divisor E 
+ * (E^2 = -n). 
+ * <p>
+ * Users will be prompted to enter four integers: n, a, b and gdiff. 
+ * <p>
+  * n : The Hirzebruch surface is F_n. <br />
  * (a,b): the curve class is ah + bf with h^2 = n, f = fiber class. <br />
  * gdiff:  max difference between the arithmetic genus and geometric genus of 
- * the curve the program will compute. <br />
+ * the curve the program will compute. <br />  
  * <p>
- * The program will compute the number of genus g curves in the linear system 
- * |ih + jf| on F_n which satisfy tangency conditions (alpha, beta) with the 
- * divisor E = h - nf. <br />
- * 1) ih + jf = ah + bf - kE for k = 0,...,a
- *    (due to the recursive nature of Vakil's formula), <br>
- * 2) all valid tangency conditions alpha and beta (valid = satisfy 
- * I(alpha) + I(beta) = j), <br />
- * 3) all g between arithmetic genus of ih +jf and (arithmetic genus of ih +jf) -gdiff. <br />
+ * The program will print two kinds of computation results to txt files:
+ * numbers of nodal curves line by line and generating series. 
  * <p>
- * alpha : tangency condition at assigned points. <br>
- * beta : tangency condition at unassigned points. beta = (beta_1, beta_2,....) <br />
- *  <p>
- * The output numbers will be located at output/Hir <br>
+ * The first kind of files contain the number of geometric genus g curves in 
+ * curve class ah + bf - iE which satisfy tangency conditions 
+ * (alpha, beta) with E for  <br />
+ * 1) i = (a - 5 + 1),..., a (due to the recursive nature 
+ * of Vakil's formula) (5 is the default number and can be changed by 
+ * modifying the instance variable printLast),  <br />
+ * 2) all g between (arithmetic genus of (ah + bf - iE) - gdiff) and 
+ *    arithmetic genus of (ah + bf - iE),  <br />
+ * 3) all valid tangency conditions alpha and beta 
+ *    (valid := satisfy I(alpha)+I(beta) = b + n*i). 
  * <p>
- * Note on algorithm: <br />
- * alpha and beta are stored by ArrayList of Integers. The length of them 
- * (and all alphaP, betaP etc...) are of fixed length which equals
- * maxlength = b + a * n+ gdiff + 1. This is because max number of fiber 
- * class is in (ah+bf)-aE = bf+a*nf = (b+a*n)f and <br />
- * g' = g - |gamma| + 1, => |gamma| = g - g' +1 = gdiff +1 <br />
- * maxlength = |beta'| = |beta+gamma|<= |beta| + |gamma| <= b+a * n+ gdiff +1. 
+ * alpha : tangency conditions at assigned points.  <br>
+ * beta : tangency conditions at unassigned points. 
+ * beta = (beta_1, beta_2,....)
+ * <p> 
+ * The first kind of output will be located at ../output/Hir and be split 
+ * according to the degrees and number of nodes. 
  * <p>
- * Operations of integer sequences are handled by the binom class, which can 
- * take arrayList of any length, as long as they satisfy required assumptions 
- * (c>=d) for substract(c,d) and binom(c,d).
+ * The second kind of files contain the generating series of those numbers. 
+ * They can be found at ../output/genHir.
+ * See the documentation of CH class for the definition and range of generating
+ * series. 
  * <p>
- * For possble future modification: If alpha and beta (and their variations) 
- * can take different length, ex: (1,2) = (1,2,0,0,..). 
- * Then they have to be trimmed while making key (the key class needs to be 
- * modified). 
- *  <p>
+ * Note on algorithm:  <br />
+ * This class and CH use the same algorithm. 
+ * <p>
+ * alpha and beta are stored by byte arrays. The length of them (and 
+ * variations) are of fixed length b + a*n. The bound is from  
+ * I(alpha) + I(beta) <= b + a*n for all (alpha, beta) in the program.
+ * All methods in arrayOp will check if the length of inputs equals b + a*n. 
+ * <p>
  * @author Yu-jong Tzeng
  * @version 2.1
- * @since August 25, 2019.
+ * @since May 23, 2020.
  */
 
-public class HirTable {    
-    private int n;  
-    private int a;
-    private int b;         
-    private int gdiff;
-    private int maxlength;    
-    private static ArrayList<Integer> zeros;
-    
-    private static HashMap<ArrayList<Integer>, Long> table;
-    private SeqOp seq;
+public class HirTable {  
+    private static int n;
+    private static int a;
+    private static int b;  
+    private static int gdiff;
+    private static int maxLength;
+    private static ArrayOp arrOp;
+    private Partitions parArr; 
+    /**
+     * The program will print out results in curve class ah + bf - iE  for 
+     * i = the biggest printLast integers less or equal to a. 
+     */
+    public static int printLast;   
+    // wDeg is the bound of weight degree of output monomial 
+    private static int wDeg; 
+    // The computation will start from i = 0 to b one by one. 
+    // At stage i, prevMap: results of bi-degrees (i - 1, b) from last CurSave
+    // curSave: results of (i, b) will possibly be used for (i + 1, b)
+    // curDump: results of (i, b) won't be used for (i + 1, b)
+    // When a new stage starts, prevMap = curSave and curDump is empty
+    private HashMap<ArrayList<Byte>, BigInteger> prevMap;
+    private HashMap<ArrayList<Byte>, BigInteger> curSave;   
+    private HashMap<ArrayList<Byte>, BigInteger> curDump;     
 
     /**
      * The constructor of the class.
      * @param n The Hirzebruch surface is F_n, n >= 0. 
      * @param a The number of ample class h in the curve class ah + bf.
-     * @param b The number of fiber class h in the curve class ah + bf.
-     * @param gdiff The max difference between arithmetic genus and geometric 
-     * genus of the curve we'll compute.
+     * @param b The number of fiber class f in the curve class ah + bf.
+     * @param gdiff the maximal difference between arithmetic genus and 
+     * geometric genus of the curves.
      */
     public HirTable(int n, int a, int b, int gdiff) {        
-        this.n = n;
         this.a = a;
         this.b = b;
-        this.gdiff = gdiff;
-        maxlength = b + a * n + gdiff + 1;     
-                
-        // All binomial coefficients needed will have parameters <= maxlength
-        seq = new SeqOp(maxlength);   
-        table = new HashMap<ArrayList<Integer>, Long>(); //store computed results
-        //create an ArrayList with all zeros of size maxlength
-        zeros = new ArrayList<Integer>();   
-        for (int i = 0; i < maxlength; i++) {
-            zeros.add(0);
-        }
-    }
-    
-    /** The main method of the class.
-     *  Paramaters a, b, gdiff is initialzed by user input. Then a class
-     * with these parameters is constructed and compute() is called.
-     *  @param args Unused
+        this.n = n;
+        this.gdiff = gdiff; 
+        maxLength = b + a * n;
+        arrOp = new ArrayOp(maxLength);  
+        parArr = new Partitions(maxLength);
+        printLast = 5;
+        wDeg = 10;
+        prevMap = new HashMap<ArrayList<Byte>, BigInteger>();                
+        curDump = new HashMap<ArrayList<Byte>, BigInteger>();
+        curSave = new HashMap<ArrayList<Byte>, BigInteger>();
+    }    
+    /** 
+     * This method prompt for user input, create objects then call compute(). 
+     * Parameters a, b, and gdiff are initialized by user input. 
+     * @param args Unused
      */
     public static void main(String[] args)
     {        
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
-        System.out.println("This program computes the number of singular" + 
-                           "curves on Hirzebrunch surfaces.");
-        System.out.println("Notation: F_n = Hirzebruch surface with n>=0,");
-        System.out.println("h is the hyperplane class with h^2 = n,");
-        System.out.println("f is the fiber class.");
-        System.out.println("Please choose the Hirzebruch surface. n = ");
-        System.out.println("n = ");
-        int n = reader.nextInt();
-        System.out.println("Enter the number of ample class a in curve class ah+bf:");        
+        // Read from user input
+        Scanner reader = new Scanner(System.in);  
+        System.out.println("This program computes the number of singular"
+            + "curves in curve class ah +bf on Hirzebruch surface F_n");
+        System.out.println("satisfy tangency conditions with a given line"
+                + " in |O(1,0)|.");
+        System.out.println("Enter n in F_n:");        
+        System.out.println("n = ");   
+        int inputn = reader.nextInt();
+        System.out.println("Enter the maximal number of a:");        
         System.out.println("a = ");
-        int a = reader.nextInt();
-        System.out.println("Enter the number of fiber class b in curve class ah+bf:");        
+        int inputa = reader.nextInt();
+        System.out.println("Enter the maximal number of b:");        
         System.out.println("b = ");
-        int b = reader.nextInt();
-        System.out.println("Enter the max number of (arithmetic genus - geometric genus):");        
+        int inputb = reader.nextInt();
+        System.out.println("Enter the max number of (arithmetic genus"
+            + "- geometric genus):");        
         System.out.println("gdiff = ");
-        int gdiff = reader.nextInt();        
+        int inputgdiff = reader.nextInt();        
         System.out.format("The output will be written in the directory" + 
-                           "../output/Hir\n");
-        reader.close();
-                 
-        HirTable T = new HirTable(n, a, b, gdiff);
-        T.compute();        
+                           "../output/Hir and ../output/genHir\n");
+        reader.close();                 
+        HirTable ht = new HirTable(inputn, inputa, inputb, inputgdiff);
+        ht.compute();        
     }    
     /** 
-     * Run this method to compute and create output file.  
+     * Compute all N(i ,j, g, alpha and beta) in the specified range and 
+     * generate output. 
      */
-    private void compute() {
-        // just setting the length
-        ArrayList<Integer> alphaPP = new ArrayList<>(zeros);         
-        ArrayList<Integer> betaPP = new ArrayList<>(zeros);        
-                       
-        // put N(ah+bf - (a-i)E, all possible alpha and beta) on F_n into dictionary. 
-        // Let D = ah+bf - (a-i)E, 
-        // D = ah+bf - (a-i)E = ah+bf-(a-i)(h-nf) = ih + (b+n(a-i))f
-        // tangency condition satisfy I\alpha + I\beta = D.E = b+n(a-i)
-        // for i = 0,...,a, g= (g_a(D)- gdiff) to g_a(D). g_a(D) = arithmetic genus of D
-        try {            
-            File outputfile = new File("output/Hir/HirTable_n=" + n+"_a=" 
-                                + a+"_b=" + b + ".txt");          
-            outputfile.getParentFile().mkdirs();
-            PrintWriter pw = new PrintWriter(outputfile, "UTF-8");   
-            for (int i = 0; i<= a; i++) {
-                ArrayList<ArrayList<Integer>> Aj = new ArrayList<ArrayList<Integer>>();
-                ArrayList<ArrayList<Integer>> Bj = new ArrayList<ArrayList<Integer>>();
-                ablist(b+n*(a-i), alphaPP, betaPP, 0, Aj, Bj); //create all tangency conditions
-                for (int g = g_a(n, i, b + n*(a - i)) - gdiff; g <= g_a(n, i, b + n*(a-i)); g++) {
-                    for (int j = 0; j < Aj.size(); j++) {
-                        long N = N(i, b+ n*(a-i), g, Aj.get(j), Bj.get(j));
-                        table.put(Key.make(i, b+ n*(a-i), g ,Aj.get(j), Bj.get(j)), N);
-                        pw.printf("N(%dh+%df, %d, ", i, b+ n * (a - i), g);
-                        pw.println(Aj.get(j) +", "+ Bj.get(j) + ") = "+ N);
+    public void compute() {
+        // put N(ah+bf - (a-i)E, all possible alpha and beta) into dictionary. 
+        // Let D = ih + jf= ah + bf - (a-i)E,
+        // this implies j = b + n(a - i)
+        // tangency condition satisfy I(alpha) + I(beta) = D.E = j
+        for (int i = 0; i <= a; i++) {
+            int j = b + n * (a - i);
+            System.out.format("Computing %dh + %df \n",  i, j);
+            prevMap = curSave;
+            curSave = new HashMap<ArrayList<Byte>, BigInteger>();
+            curDump = new HashMap<ArrayList<Byte>, BigInteger>();
+            if (i <= a - printLast) {
+                // Compute N and put in the dictionary
+                // cur is a working dictionary. First is curDump then curSave
+                HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
+                for (int r = 0; r <= gdiff; r++) {
+                    int g = g_a(n, i, j) - r; 
+                    for (int k = b + n * (a - i); k >= 0; k--) {
+                        // If j > gdiff - r then next beta will be negative. 
+                        // because |beta| = r - r' -j so these
+                        // numbers will not be used again for bigger degree.
+                        if (k <= gdiff - r) { cur = curSave; }
+                        for (byte[] alpha : parArr.get(k)) {
+                            for (byte[] beta : parArr.get(j - k)) {
+                                cur.put(Key.make(g, alpha, beta), 
+                                    N(i, g, alpha, beta));
+                            }
+                        }
                     }
                 }
+            }   
+            else {
+                for (int r = 0; r <= gdiff; r++) {
+                    // Space saving feature. Since no (i+1, b) terms and 
+                    // the first term has the same d, r, data in curDump
+                    // and curSave can be thrown away.      
+                    if (i == a) { 
+                        curDump = new HashMap<ArrayList<Byte>, BigInteger>();
+                        curSave = new HashMap<ArrayList<Byte>, BigInteger>();
+                    }
+                    output(i, r);     
+                }    
             }
-            pw.close();
-        }
+        }       
+    }
+    /** Write to output files and put results in dictionary.
+     * @param i the working degree
+     * @param g the working number of nodes
+     */
+    private void output(int i, int r) {
+        int j = b + n * (a - i); 
+        int g = g_a(n, i, j) - r;
+        try {
+            String fname = String.format("%dh+%df_g=%d.txt", i, j, g);
+            File outputfile = new File("../output/Hir/" + fname);  
+            File genFun = new File("../output/genHir/" + fname);         
+            outputfile.getParentFile().mkdirs();
+            genFun.getParentFile().mkdirs();
+            PrintWriter num = new PrintWriter(outputfile, "UTF-8"); 
+            PrintWriter gen = new PrintWriter(genFun, "UTF-8");
+            HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
+            for (int k = j; k >= 0; k--) {                
+                if (k <= gdiff - r) { cur = curSave; }
+                for (byte[] alpha : parArr.get(k)) {
+                    if (k <= 4) { 
+                        gen.println("\n");
+                        gen.println("alpha = " + MyF.str(alpha));
+                    } 
+                    for (byte[] beta : parArr.get(j - k)) {
+                        BigInteger ansN = N(i, g, alpha, beta);
+                        cur.put(Key.make(g, alpha, beta), ansN);
+                        num.printf("N(O(%d, %d), %d, %s, %s) = %d\n", 
+                             i, j, g, MyF.str(alpha), MyF.str(beta), ansN);
+                        if (k <= 4 && j - k - beta[0] <= wDeg) {
+                            gen.printf(ansN + MyF.toVar(beta) + "+");
+                        }            
+                    }
+                }    
+            }
+            num.close();
+            gen.close();
+        } 
         catch (IOException e) {
             System.out.println("There is an error in I/O.");
-        }                    
+        } 
     }
-    
     /** 
      * The recursive formula is implemented here. 
      */
-    private long N(int a, int b, int g, ArrayList<Integer> alpha, ArrayList<Integer> beta) { //skip n for simpleness
-        long ans = 0 ;
-        
-        // invalid parameters
-        if (SeqOp.I(alpha) + SeqOp.I(beta) != b || a < 0 || b < 0 || n < 0) {
-            return 0;             
+    private BigInteger N(int i, int g, byte[] alpha, byte[] beta) {      
+        // invalid inputs
+        int j = b + n * (a - i);  
+        if (arrOp.I(alpha) + arrOp.I(beta) != j) {
+            System.out.format("I(%s) + I(%s) must equal to %d\n", 
+                MyF.str(alpha), MyF.str(beta), j);
+            return BigInteger.ZERO;             
+        }
+        if (i < 0) {
+            System.out.format("The number of h can't be negative: " + i);
+            return BigInteger.ZERO;
+        }
+        if (g > g_a(n, i, j)) {
+            System.out.format("The number of nodes can't be negative: " + g);
+            return BigInteger.ZERO;
         }
         // Base case. Only fiber class passing through points. 
-        else if (a == 0 && SeqOp.sum(beta) == 0) { 
-            // from the beginning of Section 8. 
-            // These will come before those with beta !=0 in ablist by implementation.  
-            if (alpha.get(0) == SeqOp.sum(alpha) && g == 1 - b) return 1; //alpha = (k,0,0,0,....)
-            else return 0;            
-        }
-        
-        // the first term, alpha+ e_k, beta - e_k
-        // this k is position
-        for (int k = 0; k< beta.size(); k++) {    
-            if (beta.get(k) > 0){
-                ArrayList<Integer> tempAlpha = new ArrayList<Integer>(alpha);
-                ArrayList<Integer> tempBeta = new ArrayList<Integer>(beta);
-                tempAlpha.set(k, alpha.get(k) + 1);
-                tempBeta.set(k, beta.get(k) - 1);                
-                ans = ans +(k + 1) * table.get(Key.make(a, b, g, tempAlpha, tempBeta));                   
+        // from the beginning of Section 8. 
+        if (i == 0 && arrOp.I(beta) == 0) { 
+            if (alpha[0] == arrOp.sum(alpha) && g == 1 - j) {
+                return BigInteger.ONE;    
+            }
+            else {
+                return BigInteger.ZERO;
+            }
+        } 
+        BigInteger ans = BigInteger.ZERO; 
+        // the first term
+        for (int k = 0; k < j; k++) {    
+            if (beta[k] > 0) {
+                ans = ans.add(first(i, g, alpha, beta, k));
             }                
         }
-        
-        if (a > 0) { // the second term
-            ArrayList<Integer> alphaP = new ArrayList<>(zeros);
-            ArrayList<ArrayList<Integer>> resultAlpha = new ArrayList<ArrayList<Integer>>();
-            // generate all alpha' and put it in resultAlpha
-            generateA(alpha, alphaP, 0, resultAlpha);    
-           
-            for(int i = 0; i < resultAlpha.size() ; i++) {
-                ArrayList<Integer> Ai = new ArrayList<Integer>(resultAlpha.get(i));                
-                ArrayList<Integer> gamma = new ArrayList<>(zeros);
-                ArrayList<ArrayList<Integer>> resultGamma = new ArrayList<ArrayList<Integer>>();
-                // generate all valid gamma for given alpha = Ai, beta 
-                // Satisfy I\alpha + I(beta+gamma) = b+n then put in resultGamma
-                generateG(Ai, beta, gamma, 0, b + n, resultGamma);  
-
-                for (int j = 0; j< resultGamma.size(); j++){
-                    ArrayList<Integer> gammai = new ArrayList<Integer>(resultGamma.get(j));
-                    int gP = g - SeqOp.sum(gammai) + 1;
-                    ArrayList<Integer> bP = SeqOp.add(beta, gammai);                   
-                    
-                    if (gP <= g_a(n, a - 1,b + n) && gP >= g_a(n, a - 1, b + n) - gdiff){  
-                        if(table.containsKey(Key.make(a - 1, b + n, gP, Ai, bP))) {
-                            ans = ans + SeqOp.J(gammai)*seq.binom(alpha, Ai)*seq.binom(bP, beta)
-                                         *table.get(Key.make(a - 1, b + n, gP, Ai, bP));
-                        }
-                        else {   // Table doesn't contain this term
-                            System.out.println("Finding N(" + a + ", "+ b +", " + g + ", "+ alpha + ", " + beta );
-                            System.out.format("N(%d, %d, %d, ", a - 1, b + n, gP);
-                            System.out.println(Ai + ", " + bP +") can't be found."); 
-                        }
-                    }       
-                }        
-            }        
-        }
-        return ans; 
-    }                    
-    
-    /**
-     * This method create all valid tangency condition alpha and beta so that 
-     * I(alpha)+I(beta) = b.
-     * tempA and tempB are the working arraylist (working on index current). 
-     * Once finished working, the result is put in Aj and Bj. 
-     * (Aj.get(j), B_j.get(j)) is a pair of valid (alpha, beta).
+        // the second term
+        if (i > 0) {  
+            int bdj = Math.max(0, arrOp.sum(beta) - g_a(n, i, j) + g + b + n);
+            for (int k = bdj; k <= j; k++) {
+                for (byte[] bP : parArr.get(k)) {
+                    for (byte[] aP : parArr.get(j + n - k)) {
+                        ans = ans.add(second(i, g, alpha, beta, aP, bP)); 
+                    }
+                }                
+            }
+        }    
+        return ans;        
+    }  
+    /** 
+     * Computes a single term in the first term
      */
-    private void ablist(int b, ArrayList<Integer> alphaPP, ArrayList<Integer> betaPP, int current, 
-                        ArrayList<ArrayList<Integer>> Aj,  ArrayList<ArrayList<Integer>> Bj) {   
-        int l = alphaPP.size();
-        if (current == 2 * l) {
-            if (SeqOp.I(alphaPP)+ SeqOp.I(betaPP) == b) {
-                Aj.add(new ArrayList<Integer>(alphaPP));
-                Bj.add(new ArrayList<Integer>(betaPP));
-                return;
-            }         
+    private BigInteger first(int i, int g, byte[] alpha, byte[] beta, 
+                            int k) {  
+        int j = b + n * (a - i);                          
+        byte[] tempAlpha = alpha.clone();
+        byte[] tempBeta = beta.clone();
+        //alpha_+e_k, beta-e_k
+        tempAlpha[k] = (byte) (alpha[k] + 1);  
+        tempBeta[k] = (byte) (beta[k] - 1);    
+        ArrayList<Byte> key = Key.make(g, tempAlpha, tempBeta);
+        if (curSave.containsKey(key)) {
+            return curSave.get(key).multiply(BigInteger.valueOf(k + 1));
         }
-        if (current <= l - 1) {                
-            for(int i = (b - SeqOp.I(alphaPP, current)) / (current + 1); i >= 0; i--) {
-                alphaPP.set(current, i);            
-                ablist(b, alphaPP, betaPP, current + 1, Aj, Bj);
-            }                                    
+        else if (curDump.containsKey(key)) {
+            return curDump.get(key).multiply(BigInteger.valueOf(k + 1));
         }
-        if (current >= l  && current <= 2 * l - 1) {
-            for(int i = (b - SeqOp.I(alphaPP) - SeqOp.I(betaPP, current - l)) / (current - l + 1); i >= 0; i--) {
-                betaPP.set(current - l, i);            
-                ablist(b, alphaPP, betaPP, current + 1, Aj, Bj);
-            } 
-        }        
-    }
-    
-    // Given alpha, find all alphaP with alphaP <= alpha and put the result in resultAlpha   
-    private void generateA(ArrayList<Integer> alpha, ArrayList<Integer> alphaP,  int current, 
-                          ArrayList<ArrayList<Integer>> resultAlpha) {
-        if (current == alpha.size()) {
-            resultAlpha.add(new ArrayList<Integer>(alphaP));
-            return;
+        else {
+            System.out.format("Finding N(%d, %d, %d, %s, %s)\n", 
+                i, j, g, MyF.str(alpha), MyF.str(beta));
+            System.out.format("N(%d, %d, %d, %s, %s) can't be found.\n", 
+                i, j, g, MyF.str(tempAlpha), MyF.str(tempBeta));
         }
-        for (int i = 0 ; i <= alpha.get(current); i++) {
-            alphaP.set(current, i);            
-            generateA(alpha, alphaP, current + 1, resultAlpha);
-        }
-    }
-    
-    private void generateG(ArrayList<Integer> alphaP, ArrayList<Integer> beta, ArrayList<Integer> gamma, int current, 
-    int b, ArrayList<ArrayList<Integer>> resultGamma) {
-        if(current == 0) {                                       //clear gamma to the zero sequence
-            for (int i = 0; i < gamma.size(); i++) {
-                    gamma.set(i, 0);
+        return BigInteger.ZERO;  
+    }       
+    /** 
+     *  Computes a single term in the second term
+     */
+    private BigInteger second(int i, int g, byte[] alpha, byte[] beta, 
+                      byte[] aP, byte[] bP) {
+        int j = b + n * (a - i);                    
+        if (arrOp.greater(alpha, aP) && arrOp.greater(bP, beta)) {
+            byte[] gamma = arrOp.substract(bP, beta);
+            int gP = g - arrOp.sum(gamma) + 1;
+            // no need to check gP >= MyF.g_a(aa - 1, b) - gdiff --
+            // it's proven.
+            if (gP <= g_a(n, i - 1, j + n)) {                
+                ArrayList<Byte> key = Key.make(gP, aP, bP);
+                if (prevMap.containsKey(key)) {
+                    BigInteger coeff = MyF.prod(arrOp.J(gamma),  
+                         arrOp.binom(alpha, aP), arrOp.binom(bP, beta));
+                    return coeff.multiply(prevMap.get(key));
+                }
+                else { // Table doesn't contain this term
+                    System.out.format("Finding N(%dh + %df, %d, %s, %s)\n",
+                        i, j, g, MyF.str(alpha), MyF.str(beta));
+                    System.out.format("N(%dh + %df, %d, %s, %s) wasn't found.\n", 
+                        i - 1, j + n, gP, MyF.str(aP), MyF.str(bP));
+                }              
             }
         }
-        
-        if(current == gamma.size()) {
-            if (SeqOp.I(alphaP) + SeqOp.I(beta) + SeqOp.I(gamma) == b) {
-                resultGamma.add(new ArrayList<Integer>(gamma));
-            }   
-            return;
-        }
-       
-        for(int i = (b -  SeqOp.I(alphaP) - SeqOp.I(beta) - SeqOp.I(gamma, current)) / (current + 1); i >= 0; i--) {
-            gamma.set(current, i);
-            generateG(alphaP, beta, gamma, current + 1, b, resultGamma);
-        }
-    }  
+        return BigInteger.ZERO;        
+    } 
     /**
-     * Compute the arithmetic genus of the curve class ah + bf on F_n.
+     * Compute the arithmetic genus of curve class ih + jf on F_m.
      */
-    private static int g_a(int n, int a, int b) {  
-        return (a - 1) * (b - 1)+ a * (a - 1) * n / 2;
+    private static int g_a(int m, int i, int j) {  
+        return (i - 1) * (j - 1) + i * (i - 1) * m / 2;
     }
-}    
 
+}    

@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=F0decreaseCheck
-comment0.text=\n\ <p>\n\ Let\ N(a,\ b,\ g,\ alpha,\ beta)\ be\ the\ number\ of\ \ genus\ g\ curves\ in\ |O(a,b)|\ \n\ on\ P^1*P^1\ which\ satisfy\ tangency\ conditions\ (alpha,\ beta)\ with\ a\ fixed\ \n\ line\ in\ |O(1,0)|.\ \n\ F0decreaseCheck\ is\ a\ program\ to\ check\ that\ for\ fixed\ a,\ b,\ g,\ beta,\ \n\ N(a,\ b,\ g,\ alpha,\ beta),\ is\ a\ non-increasing\ sequence\ in\ lexicographic\ \n\ order\ of\ alpha.\ \n\ If\ not,\ the\ counterexample\ will\ be\ printed\ out\ on\ the\ screen\ in\ the\ form\n\ "N(a,\ b,\ g,\ alpha,\ beta)\ >\ last"\ where\ last\ is\ the\ number\ right\ before.\ \n\ </p>\n\ \n\ (a,b)\:\ the\ maximal\ bi-degrees\ of\ the\ curve\ class\ <br>\n\ \n\ maxNode\:\ \ max\ difference\ between\ the\ arithmetic\ genus\ and\ geometric\ genus\ of\ \n\ the\ curve\ the\ program\ will\ compute.\ \ <br>\n\ \n\ The\ program\ will\ check\ N(i,\ b,\ g',\ alpha,\ beta)\ for\ all\ i\ <\=\ a,\ 0\ <\=\ g'\ <\=\ g,\n\ and\ all\ valid\ alpha\ and\ beta.\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.0\n\ @since\ May\ 22,\ 2019.\n
+comment0.text=\n\ <p>\n\ Let\ N(a,\ b,\ g,\ alpha,\ beta)\ be\ the\ number\ of\ \ genus\ g\ curves\ in\ |O(a,b)|\ \n\ on\ P^1*P^1\ which\ satisfy\ tangency\ conditions\ (alpha,\ beta)\ with\ a\ fixed\ \n\ line\ in\ |O(1,0)|.\ \n\ F0decreaseCheck\ is\ a\ program\ to\ check\ that\ for\ fixed\ a,\ b,\ g,\ beta,\ \n\ N(a,\ b,\ g,\ alpha,\ beta),\ is\ a\ non-increasing\ sequence\ in\ lexicographic\ \n\ order\ of\ alpha.\ \n\ If\ not,\ the\ counterexample\ will\ be\ printed\ out\ on\ the\ screen\ in\ the\ form\n\ "N(a,\ b,\ g,\ alpha,\ beta)\ >\ last"\ where\ last\ is\ the\ number\ right\ before.\ \n\ </p>\n\ \n\ (a,b)\:\ the\ maximal\ bi-degrees\ of\ the\ curve\ class\ <br>\n\ \n\ gdiff\:\ \ max\ difference\ between\ the\ arithmetic\ genus\ and\ geometric\ genus\ of\ \n\ the\ curve\ the\ program\ will\ compute.\ \ <br>\n\ \n\ The\ program\ will\ check\ N(i,\ b,\ g',\ alpha,\ beta)\ for\ all\ i\ <\=\ a,\ g'\ between\ \n\ the\ arithmetic\ genus\ of\ (i,\ b)\ and\ (the\ arithmetic\ genus\ of\ (i,\ b)\ -\ gdiff)\n\ and\ all\ valid\ alpha\ and\ beta.\ \n\ \n\ @author\ Yu-jong\ Tzeng\n\ @version\ 3.0\n\ @since\ May\ 22,\ 2020.\n
 comment1.params=a\ b\ gdiff
 comment1.target=F0decreaseCheck(int,\ int,\ int)
 comment1.text=\n\ The\ constructor\ of\ the\ class.\n\ @param\ a\ the\ number\ of\ ample\ class\ h\ in\ the\ curve\ class\ O(a,b)\n\ @param\ b\ the\ number\ of\ fiber\ class\ h\ in\ the\ curve\ class\ O(a,b)\n\ @param\ gdiff\ the\ max\ difference\ between\ arithmetic\ genus\ and\ geometric\ \n\ genus\ of\ the\ curve\ we'll\ compute\n
@@ -10,7 +10,13 @@ comment2.text=\ \n\ Call\ this\ method\ compute\ the\ results\ and\ generate\ ou
 comment3.params=
 comment3.target=void\ compute()
 comment3.text=\ \n\ Run\ this\ method\ to\ compute\ and\ create\ output\ file.\ \ \n
-comment4.params=aa\ bb\ g\ alpha\ beta
-comment4.target=long\ N(int,\ int,\ int,\ byte[],\ byte[])
+comment4.params=aa\ g\ alpha\ beta
+comment4.target=java.math.BigInteger\ N(int,\ int,\ byte[],\ byte[])
 comment4.text=\ \n\ The\ recursive\ formula\ is\ implemented\ here.\ \n
-numComments=5
+comment5.params=i\ g\ alpha\ beta\ k
+comment5.target=java.math.BigInteger\ first(int,\ int,\ byte[],\ byte[],\ int)
+comment5.text=\ \n\ Computes\ a\ single\ term\ in\ the\ first\ term\n
+comment6.params=aa\ g\ alpha\ beta\ aP\ bP
+comment6.target=java.math.BigInteger\ second(int,\ int,\ byte[],\ byte[],\ byte[],\ byte[])
+comment6.text=\ \n\ \ Computes\ a\ single\ term\ in\ the\ second\ term\n
+numComments=7
