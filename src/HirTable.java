@@ -40,7 +40,7 @@ import java.math.BigInteger;
  * beta = (beta_1, beta_2,....)
  * <p> 
  * The first kind of output will be located at ../output/Hir and be split 
- * according to the degrees and number of nodes. 
+ * according to n, the degrees and number of nodes. 
  * <p>
  * The second kind of files contain the generating series of those numbers. 
  * They can be found at ../output/genHir.
@@ -118,7 +118,7 @@ public class HirTable {
         System.out.println("This program computes the number of singular"
             + "curves in curve class ah +bf on Hirzebruch surface F_n");
         System.out.println("satisfy tangency conditions with a given line"
-                + " in |O(1,0)|.");
+                + " in |E|.");
         System.out.println("Enter n in F_n:");        
         System.out.println("n = ");   
         int inputn = reader.nextInt();
@@ -196,8 +196,8 @@ public class HirTable {
         int g = g_a(n, i, j) - r;
         try {
             String fname = String.format("%dh+%df_g=%d.txt", i, j, g);
-            File outputfile = new File("../output/Hir/" + fname);  
-            File genFun = new File("../output/genHir/" + fname);         
+            File outputfile = new File("../output/Hir/F"+ n + "/" + fname);  
+            File genFun = new File("../output/genHir/F"+ n + "/" + fname);         
             outputfile.getParentFile().mkdirs();
             genFun.getParentFile().mkdirs();
             PrintWriter num = new PrintWriter(outputfile, "UTF-8"); 
@@ -213,7 +213,7 @@ public class HirTable {
                     for (byte[] beta : parArr.get(j - k)) {
                         BigInteger ansN = N(i, g, alpha, beta);
                         cur.put(Key.make(g, alpha, beta), ansN);
-                        num.printf("N(O(%d, %d), %d, %s, %s) = %d\n", 
+                        num.printf("N(%dh+%df, %d, %s, %s) = %d\n", 
                              i, j, g, MyF.str(alpha), MyF.str(beta), ansN);
                         if (k <= 4 && j - k - beta[0] <= wDeg) {
                             gen.printf(ansN + MyF.toVar(beta) + "+");
@@ -258,6 +258,8 @@ public class HirTable {
             }
         } 
         BigInteger ans = BigInteger.ZERO; 
+        //System.out.format("Computing i = %d, j = %d, g = %d, %s, %s\n",
+        //            i, j, g, MyF.str(alpha), MyF.str(beta));
         // the first term
         for (int k = 0; k < j; k++) {    
             if (beta[k] > 0) {
@@ -266,10 +268,12 @@ public class HirTable {
         }
         // the second term
         if (i > 0) {  
-            int bdj = Math.max(0, arrOp.sum(beta) - g_a(n, i, j) + g + b + n);
-            for (int k = bdj; k <= j; k++) {
+            int bdj = Math.max(0, g - g_a(n, i -1, j + n) + arrOp.sum(beta) + 1);
+            //System.out.format("bound = [%d, j + n], %d- %d + %d + %d\n", 
+            //    bdj, g,  g_a(n, i -1, j + n), arrOp.sum(beta), 1);
+            for (int k = bdj; k <= j + n; k++) {
                 for (byte[] bP : parArr.get(k)) {
-                    for (byte[] aP : parArr.get(j + n - k)) {
+                    for (byte[] aP : parArr.get(j + n - k)) {                     
                         ans = ans.add(second(i, g, alpha, beta, aP, bP)); 
                     }
                 }                
@@ -290,9 +294,11 @@ public class HirTable {
         tempBeta[k] = (byte) (beta[k] - 1);    
         ArrayList<Byte> key = Key.make(g, tempAlpha, tempBeta);
         if (curSave.containsKey(key)) {
+            //System.out.println(curSave.get(key));
             return curSave.get(key).multiply(BigInteger.valueOf(k + 1));
         }
         else if (curDump.containsKey(key)) {
+            //System.out.println(curDump.get(key));
             return curDump.get(key).multiply(BigInteger.valueOf(k + 1));
         }
         else {
@@ -301,6 +307,7 @@ public class HirTable {
             System.out.format("N(%d, %d, %d, %s, %s) can't be found.\n", 
                 i, j, g, MyF.str(tempAlpha), MyF.str(tempBeta));
         }
+        //System.out.println(0);
         return BigInteger.ZERO;  
     }       
     /** 
@@ -312,13 +319,15 @@ public class HirTable {
         if (arrOp.greater(alpha, aP) && arrOp.greater(bP, beta)) {
             byte[] gamma = arrOp.substract(bP, beta);
             int gP = g - arrOp.sum(gamma) + 1;
+            //System.out.format("sec i = %d, j = %d, g = %d, %s, %s\n",
+            //        i - 1, j + n, gP, MyF.str(aP), MyF.str(bP));  
             // no need to check gP >= MyF.g_a(aa - 1, b) - gdiff --
             // it's proven.
             if (gP <= g_a(n, i - 1, j + n)) {                
-                ArrayList<Byte> key = Key.make(gP, aP, bP);
+                ArrayList<Byte> key = Key.make(gP, aP, bP);                
                 if (prevMap.containsKey(key)) {
                     BigInteger coeff = MyF.prod(arrOp.J(gamma),  
-                         arrOp.binom(alpha, aP), arrOp.binom(bP, beta));
+                         arrOp.binom(alpha, aP), arrOp.binom(bP, beta));                      
                     return coeff.multiply(prevMap.get(key));
                 }
                 else { // Table doesn't contain this term
@@ -329,6 +338,7 @@ public class HirTable {
                 }              
             }
         }
+        //System.out.println("Nope");
         return BigInteger.ZERO;        
     } 
     /**
