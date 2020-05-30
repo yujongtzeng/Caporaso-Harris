@@ -26,13 +26,13 @@ import java.math.BigInteger;
  * The first kind of files contain the number of geometric genus g curves of 
  * bi-degrees (i, b) on P^1*P^1 which satisfy tangency conditions 
  * (alpha, beta) with a fixed line in |O(1,0)| for  <br />
- * 1) (i,b) for i = (a - 5 + 1),..., a (due to the recursive nature 
- * of Vakil's formula) (5 is the default number and can be changed by 
- * modifying the instance variable printLast),  <br />
+ * 1) (i,b) for i = 0,..., a (due to the recursive nature 
+ * of Vakil's formula). To limit the range, modify the variable printLast  
+ * to print the biggest printLast different numbers less or equal to a. <br />
  * 2) all g between (arithmetic genus of O(i,b) - maxNode) and 
  *    arithmetic genus of O(i,b),  <br />
  * 3) all valid tangency conditions alpha and beta 
- *    (valid := satisfy I(alpha)+I(beta) = b). 
+ *    (valid := satisfy I(alpha) + I(beta) = b). 
  * <p>
  * alpha : tangency conditions at assigned points.  <br>
  * beta : tangency conditions at unassigned points. 
@@ -56,7 +56,7 @@ import java.math.BigInteger;
  * <p>
  * @author Yu-jong Tzeng
  * @version 2.1
- * @since May 21, 2020.
+ * @since May 30, 2020.
  */
 
 public class F0table {  
@@ -95,7 +95,7 @@ public class F0table {
         this.maxNode = maxNode;       
         arrOp = new ArrayOp(b);  
         parArr = new Partitions(b);
-        printLast = 5;
+        printLast = a + 1;
         wDeg = 10;
         prevMap = new HashMap<ArrayList<Byte>, BigInteger>();                
         curDump = new HashMap<ArrayList<Byte>, BigInteger>();
@@ -182,7 +182,7 @@ public class F0table {
      */
     private void output(int i, int g) {
         try {
-            String fname = String.format("O(%d, %d)_g=%d.txt", i, b, g);
+            String fname = String.format("%dh+%df_g=%d.txt", i, b, g);
             File outputfile = new File("../output/F0/" + fname);  
             File genFun = new File("../output/genF0/" + fname);         
             outputfile.getParentFile().mkdirs();
@@ -200,7 +200,7 @@ public class F0table {
                     for (byte[] beta : parArr.get(b - j)) {
                         BigInteger ansN = N(i, g, alpha, beta);
                         cur.put(Key.make(g, alpha, beta), ansN);
-                        num.printf("N(O(%d, %d), %d, %s, %s) = %d\n", 
+                        num.printf("N(%dh+%df, %d, %s, %s) = %d\n", 
                              i, b, g, MyF.str(alpha), MyF.str(beta), ansN);
                         if (j <= 4 && b - j - beta[0] <= wDeg) {
                             gen.printf(ansN + MyF.toVar(beta) + "+");
