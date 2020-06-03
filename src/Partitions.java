@@ -4,16 +4,17 @@ import java.util.Arrays;
  * The Partitions class generates all integer partitions of nonnegative 
  * integers less or equal to n. Partitions are expressed in the notation of
  * Caporaso-Harris' paper "Counting plane curves of any genus", 
- * i.e. if n = 1*a_1 + 2*a_2 + ....+ n*a_n is a partition of n, then this 
- * partition is recorded as (a_1, a_2, ..., a_n). 
- * Note all partitions will have a fixed length n. 
+ * i.e. if k = 1*a_1 + 2*a_2 + ....+ n*a_n is a partition of k, then this 
+ * partition is recorded as a byte array [a_1, a_2, ..., a_n]. 
+ * Note all partitions will have a fixed length n given by user input. 
  * 
  * The input n has to be less or equal than 127 (byte maximum). 
  * 
  * @author Yu-jong Tzeng
- * @since May 18, 2020
- * @version 1.2
+ * @version 4.0
+ * @since 2.0
  */
+
 public class Partitions
 {
     // parArray[i] is the ArrayList consisting of all partitions of i
@@ -43,8 +44,7 @@ public class Partitions
         }
     }
     /**
-     * Return all partitions of the input number k as an ArrayList of byte 
-     * arrays. 
+     * Return all partitions of the input number k.
      * @param k Any integer with 0 <= k <= n
      * @return All partitions of k if 0 <= k <= n. Otherwise
      * return an empty Arraylist.

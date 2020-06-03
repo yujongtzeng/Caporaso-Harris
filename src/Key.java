@@ -3,8 +3,8 @@ import java.util.Arrays;
 /** The Key class has a static method which concatenates inputs into an 
  * ArrayList. 
  * @author Yu-jong Tzeng
- * @version 2.3
- * @since May 31, 2020.
+ * @version 4.0
+ * @since 2.0
  */
 
 public class Key   
