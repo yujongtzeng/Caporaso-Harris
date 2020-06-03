@@ -1,21 +1,20 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-/** The Key class has two static methods to concatenate inputs into an 
- * ArrayList. Both methods are called make. The only difference 
- * between them is the types of inputs. 
+/** The Key class has a static method which concatenates inputs into an 
+ * ArrayList. 
  * @author Yu-jong Tzeng
- * @version 2.2
- * @since May 18, 2020.
+ * @version 2.3
+ * @since May 31, 2020.
  */
 
 public class Key   
 {        
     /**
      * The make method concatenates one integer and two byte[]. 
-     * @param r int, need to be small enough to fit in byte type. 
-     * @param alpha byte[]
-     * @param beta byte[]
-     * @return ArrayList<Byte> The concatenation of the inputs 
+     * @param r An integer small enough to fit in byte type. 
+     * @param alpha Any byte[]
+     * @param beta Any byte[]
+     * @return The concatenation of the inputs as an ArrayList<Byte>.
      * (no separators). 
      */
     public static ArrayList<Byte> make(int r, byte[] alpha, byte[] beta) {
@@ -30,21 +29,4 @@ public class Key
         }
         return key;        
     }     
-     /**
-     * The make method concatenates one integer and two ArrayList<Integers>. 
-     * @param g int
-     * @param alpha ArrayList<Integer>
-     * @param beta ArrayList<Integer>
-     * @return ArrayList<Integer> The concatenation of the inputs 
-     * (no separators). 
-     */    
-    public static ArrayList<Integer> make(int g, 
-                        ArrayList<Integer> alpha, ArrayList<Integer> beta) {
-        // for HirTable class                    
-        ArrayList<Integer> key = new ArrayList<Integer>();
-        key.add(g);      
-        key.addAll(alpha);
-        key.addAll(beta);
-        return key;        
-    }  
 }

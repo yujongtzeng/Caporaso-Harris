@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 /**
  * The Partitions class generates all integer partitions of nonnegative 
- * integers less or equal to n. Partitions are expressed in the notations of
+ * integers less or equal to n. Partitions are expressed in the notation of
  * Caporaso-Harris' paper "Counting plane curves of any genus", 
  * i.e. if n = 1*a_1 + 2*a_2 + ....+ n*a_n is a partition of n, then this 
  * partition is recorded as (a_1, a_2, ..., a_n). 
