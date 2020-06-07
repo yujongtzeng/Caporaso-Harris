@@ -3,22 +3,22 @@ import java.util.Scanner;
 import java.io.FileNotFoundException; 
 import java.io.IOException; 
 /**
- * The Test class runs pre-designed tests for CH and F0table classes.
- * It compares files in testFiles directory with program outputs line 
+ * The Test class runs pre-designed tests for CH and HirTable classes.
+ * It compares files in src/testFiles directory with program outputs line 
  * by line. 
  * If there are mismatchs, the difference will be printed out.
  * <p>
  * It will run tests for CH class with (deg, maxNode) = (6, 15), (10, 4) and 
- * tests for F0table class for (a, b, maxNode) = (10, 1, 3), (4, 2, 3), 
- * (6, 3, 7) and (4, 4, 10). 
+ * tests for HirTable class for (a, b, maxNode) = (10, 1, 3), (4, 2, 3), 
+ * (6, 3, 7) and (4, 4, 10) on F0. 
  * This tests covers all numbers previously compute in Caporaso-Harris' paper
  * "Counting plane curves of any genus" p.5-6 and in Vakil's paper "Counting 
  * curves on rational surfaces" p.75 for P^1*P^1.
  * 
- * Note: this test only check when printLast = deg in CH and b in F0table.
+ * Note: this test only check when printLast = deg in CH and a + 1 in Hirtable.
  * @author Yu-jong Tzeng
- * @version 2.0
- * @since May 22, 2020.
+ * @version 4.0
+ * @since 3.0
  */
 public class Test
 {   
@@ -27,21 +27,32 @@ public class Test
      * @param args unused
      */
     public static void main(String[] args) {
-        // Select the range of testing. Need to put test files into 
-        // testFiles/ first.
-        testCH(6, 15);     //default (10, 4, 1)
-        testCH(10, 4);     //default (6, 15, 2)
-        testHir(0, 10, 1, 3);    //default (10, 1, 3, 1)
-        testHir(0, 4, 2, 3);     //default(4, 2, 3, 2)
-        testHir(0, 6, 3, 7);     //default (6, 3, 7, 3)
-        testHir(0, 4, 4, 10);    //default(4, 4, 10, 4)
+        // Select the range of testing. The answers are already in 
+        // src/testFiles/.
+        testCH(6, 15);     
+        testCH(10, 4);     
+        testHir(0, 4, 2, 3);     
+        testHir(0, 4, 4, 10); 
+        testHir(0, 5, 12, 10);  
+        testHir(0, 6, 3, 7);    
+        testHir(0, 10, 1, 3);        
+        testHir(1, 2, 1, 1); 
+        testHir(1, 2, 2, 2);
+        testHir(1, 2, 3, 3);
+        testHir(1, 2, 4, 4);
+        testHir(2, 2, 0, 1);
+        testHir(2, 2, 1, 2);
+        testHir(2, 2, 2, 3);
+        testHir(3, 2, 0, 2);
+        testHir(3, 2, 1, 3);
+        testHir(4, 2, 0, 3);
     } 
     /**
      * Output the comparison between test files and output files of CH.
      */
     private static void testCH(int maxdeg, int delta) {
         CH ch = new CH(maxdeg, delta);
-        ch.printLast = maxdeg;
+        //ch.printLast = maxdeg;
         ch.compute();     
         System.out.format("Testing maxdeg = %d and maxNode = %d:\n", 
             maxdeg, delta);
@@ -64,22 +75,22 @@ public class Test
      */
     private static void testHir(int n, int a, int b, int maxNode) {
         HirTable ht = new HirTable(n, a, b, maxNode);
-        ht.printLast = a + 1;
+        //ht.printLast = a + 1;
         ht.compute();             
-        System.out.format("Testing bidegree (%d, %d) and maxNode = %d: on F%d\n", 
+        System.out.format("Testing %dh+%df and maxNode = %d: on F%d\n", 
             a, b, maxNode, n);
         for (int i = 0; i <= a; i++) {
             int j = b + n * (a - i);
             for (int r = 0; r <= maxNode; r++) {
                 int g = g_a(n, i, j) - r;
                 String fname = String.format("%dh+%df_g=%d.txt", i, j, g);
-                String Fn = "F" + n + "/";
+                String fn = "F" + n + "/";
                 //System.out.println(fname);
                 String dir = String.format("F%d(%d, %d, %d)/", n, a, b, maxNode);
                 //System.out.println("testFiles/" +  dir + fname);
                 //System.out.println("../output/Hir/F"+ n + "/" + fname);
                 Boolean diffL = compare(new File("testFiles/" +  dir 
-                    + fname), new File("../output/Hir/"+ Fn + fname));
+                    + fname), new File("../output/Hir/" + fn + fname));
                 if (diffL) {
                     System.out.println(" Fail for " + fname);
                 }  
@@ -110,9 +121,13 @@ public class Test
         } 
         catch (IOException e) {
             System.out.println("There is an error in I/O for Test.java.");
+            return true;
         }
         return false;
     }
+    /**
+     * Compute the arithmetic genus of curve class ih + jf on F_m.
+     */
     private static int g_a(int m, int i, int j) {  
         return (i - 1) * (j - 1) + i * (i - 1) * m / 2;
     }

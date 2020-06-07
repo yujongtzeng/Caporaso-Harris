@@ -4,8 +4,8 @@ import static java.lang.Math.*;
  * time and space complexity of the CH class. 
  * <p>
  * @author Yu-jong Tzeng
- * @version 2.1
- * @since May. 21, 2020.
+ * @version 4.0
+ * @since 3.1
  */
 public class Complexity
 {
