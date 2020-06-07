@@ -78,7 +78,7 @@ public class CH {
      * The number of top degrees of the curve classes which will be printed    
      * out. 
      * The output will will contain number of nodal curves of degrees d = 
-     * (maxNode -printLast +1) to maxNode. 
+     * (deg -printLast +1) to maxNode. Default is deg. 
      */
     public static int printLast;  
     // wDeg is the bound of weight degree of output monomial 

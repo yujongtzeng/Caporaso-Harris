@@ -73,7 +73,7 @@ public class F0table {
     public static int printLast;   
     // wDeg is the bound of weight degree of output monomial 
     private static int wDeg; 
-    // The computation will start from i = 0 to b one by one. 
+    // The computation will start from i = 0 to a one by one. 
     // At stage i, prevMap: results of bi-degrees (i - 1, b) from last CurSave
     // curSave: results of (i, b) will possibly be used for (i + 1, b)
     // curDump: results of (i, b) won't be used for (i + 1, b)
@@ -83,7 +83,7 @@ public class F0table {
     private HashMap<ArrayList<Byte>, BigInteger> curDump;     
     private Partitions parArr; 
     /**
-     * The constructor of the class.
+     * The constructor of the class. Will do setups before actual computation.
      * @param a the number of ample class h in the curve class O(a,b)
      * @param b the number of fiber class h in the curve class O(a,b)
      * @param maxNode the maximal difference between arithmetic genus and 

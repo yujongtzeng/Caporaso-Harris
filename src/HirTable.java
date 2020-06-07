@@ -11,7 +11,7 @@ import java.math.BigInteger;
  * The HirTable class uses dynamic programming approach to implement the 
  * recursive formula of Vakil in "Counting curves on rational surfaces". 
  * The formula computes the number of singular curves on Hirzebruch surfaces 
- * F_n  which satisfy given tangency conditions with with the divisor E 
+ * F_n  which satisfy given tangency conditions with the divisor E 
  * (E^2 = -n). 
  * <p>
  * Users will be prompted to enter four integers: n, a, b and gdiff. 
@@ -34,7 +34,7 @@ import java.math.BigInteger;
  * 2) all g between (arithmetic genus of (ah + bf - iE) - gdiff) and 
  *    arithmetic genus of (ah + bf - iE),  <br />
  * 3) all valid tangency conditions alpha and beta 
- *    (valid := satisfy I(alpha) + I(beta) = b + n*i). 
+ *    (valid := satisfy I(alpha) + I(beta) = (ah + bf - iE)E). 
  * <p>
  * alpha : tangency conditions at assigned points.  <br>
  * beta : tangency conditions at unassigned points. 
@@ -57,8 +57,8 @@ import java.math.BigInteger;
  * All methods in arrayOp will check if the length of inputs equals b + a*n. 
  * <p>
  * @author Yu-jong Tzeng
- * @version 3.0
- * @since May 30, 2020.
+ * @version 4.0
+ * @since 2.0.
  */
 
 public class HirTable {  
@@ -71,26 +71,26 @@ public class HirTable {
     private Partitions parArr; 
     /**
      * The program will print out results in curve class ah + bf - iE  for 
-     * i = the biggest printLast integers less or equal to a. 
+     * i = the biggest printLast integers less or equal to a. Default is a + 1
      */
     public static int printLast;   
     // wDeg is the bound of weight degree of output monomial 
     private static int wDeg; 
-    // The computation will start from i = 0 to b one by one. 
-    // At stage i, prevMap: results of bi-degrees (i - 1, b) from last CurSave
-    // curSave: results of (i, b) will possibly be used for (i + 1, b)
-    // curDump: results of (i, b) won't be used for (i + 1, b)
+    // The computation will start from i = 0 to a one by one. 
+    // At stage i, prevMap: results of ah + bf - (i-1) E from last CurSave
+    // curSave: results of ah + bf - iE may be used for ah + bf - (i + 1)E
+    // curDump: results of ah + bf - iE won't be used for ah + bf - (i + 1)E
     // When a new stage starts, prevMap = curSave and curDump is empty
     private HashMap<ArrayList<Byte>, BigInteger> prevMap;
     private HashMap<ArrayList<Byte>, BigInteger> curSave;   
     private HashMap<ArrayList<Byte>, BigInteger> curDump;     
 
     /**
-     * The constructor of the class.
+     * The constructor of the class. Will do setups before actual computation.
      * @param n The Hirzebruch surface is F_n, n >= 0. 
      * @param a The number of ample class h in the curve class ah + bf.
      * @param b The number of fiber class f in the curve class ah + bf.
-     * @param gdiff the maximal difference between arithmetic genus and 
+     * @param gdiff The maximal difference between arithmetic genus and 
      * geometric genus of the curves.
      */
     public HirTable(int n, int a, int b, int gdiff) {        
@@ -101,7 +101,7 @@ public class HirTable {
         maxLength = b + a * n;
         arrOp = new ArrayOp(maxLength);  
         parArr = new Partitions(maxLength);
-        printLast = 5;
+        printLast = a + 1;
         wDeg = 10;
         prevMap = new HashMap<ArrayList<Byte>, BigInteger>();                
         curDump = new HashMap<ArrayList<Byte>, BigInteger>();
@@ -109,7 +109,7 @@ public class HirTable {
     }    
     /** 
      * This method prompt for user input, create objects then call compute(). 
-     * Parameters a, b, and gdiff are initialized by user input. 
+     * Parameters n, a, b, and gdiff are initialized by user input. 
      * @param args Unused
      */
     public static void main(String[] args)
@@ -145,7 +145,7 @@ public class HirTable {
      */
     public void compute() {
         // put N(ah+bf - (a-i)E, all possible alpha and beta) into dictionary. 
-        // Let D = ih + jf= ah + bf - (a-i)E,
+        // Let D = ih + jf = ah + bf - (a-i)E,
         // this implies j = b + n(a - i)
         // tangency condition satisfy I(alpha) + I(beta) = D.E = j
         for (int i = 0; i <= a; i++) {
@@ -160,10 +160,10 @@ public class HirTable {
                 HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
                 for (int r = 0; r <= gdiff; r++) {
                     int g = g_a(n, i, j) - r; 
-                    for (int k = b + n * (a - i); k >= 0; k--) {
-                        // If j > gdiff - r then next beta will be negative. 
-                        // because |beta| = r - r' -j so these
-                        // numbers will not be used again for bigger degree.
+                    for (int k = j; k >= 0; k--) {
+                        // If k > gdiff - r then next beta will be negative. 
+                        // because |next beta| = r - r' - k so these
+                        // |next beta| <= gdiff - r - k < 0. 
                         if (k <= gdiff - r) { cur = curSave; }
                         for (byte[] alpha : parArr.get(k)) {
                             for (byte[] beta : parArr.get(j - k)) {
@@ -176,7 +176,7 @@ public class HirTable {
             }   
             else {
                 for (int r = 0; r <= gdiff; r++) {
-                    // Space saving feature. Since no (i+1, b) terms and 
+                    // Space saving feature. Since no i = a + 1 terms and 
                     // the first term has the same d, r, data in curDump
                     // and curSave can be thrown away.      
                     if (i == a) { 
@@ -190,15 +190,15 @@ public class HirTable {
     }
     /** Write to output files and put results in dictionary.
      * @param i the working degree
-     * @param g the working number of nodes
+     * @param r the working number of nodes
      */
     private void output(int i, int r) {
         int j = b + n * (a - i); 
         int g = g_a(n, i, j) - r;
         try {
             String fname = String.format("F%d/%dh+%df_g=%d.txt", n, i, j, g);
-            File outputfile = new File("../output/Hir/"+ fname);  
-            File genFun = new File("../output/genHir/"+ fname);         
+            File outputfile = new File("../output/Hir/" + fname);  
+            File genFun = new File("../output/genHir/" + fname);         
             outputfile.getParentFile().mkdirs();
             genFun.getParentFile().mkdirs();
             PrintWriter num = new PrintWriter(outputfile, "UTF-8"); 
@@ -269,12 +269,13 @@ public class HirTable {
         }
         // the second term
         if (i > 0) {  
-            int bdj = Math.max(0, g - g_a(n, i -1, j + n) + arrOp.sum(beta) + 1);
+            // |\beta'| = g - g' + |beta| + 1
+            int bdj = g - g_a(n, i - 1, j + n) + arrOp.sum(beta) + 1;
             //System.out.format("bound = [%d, j + n], %d- %d + %d + %d\n", 
             //    bdj, g,  g_a(n, i -1, j + n), arrOp.sum(beta), 1);
-            for (int k = bdj; k <= j + n; k++) {
+            for (int k = Math.max(0, bdj); k <= j + n; k++) {
                 for (byte[] bP : parArr.get(k)) {
-                    for (byte[] aP : parArr.get(j + n - k)) {                     
+                    for (byte[] aP : parArr.get(j + n - k)) {       
                         ans = ans.add(second(i, g, alpha, beta, aP, bP)); 
                     }
                 }                
@@ -320,21 +321,19 @@ public class HirTable {
         if (arrOp.greater(alpha, aP) && arrOp.greater(bP, beta)) {
             byte[] gamma = arrOp.substract(bP, beta);
             int gP = g - arrOp.sum(gamma) + 1;
-            //System.out.format("sec i = %d, j = %d, g = %d, %s, %s\n",
-            //        i - 1, j + n, gP, MyF.str(aP), MyF.str(bP));  
             // no need to check gP >= MyF.g_a(aa - 1, b) - gdiff --
             // it's proven.
             if (gP <= g_a(n, i - 1, j + n)) {                
                 ArrayList<Byte> key = Key.make(gP, aP, bP);                
                 if (prevMap.containsKey(key)) {
                     BigInteger coeff = MyF.prod(arrOp.J(gamma),  
-                         arrOp.binom(alpha, aP), arrOp.binom(bP, beta));                      
+                         arrOp.binom(alpha, aP), arrOp.binom(bP, beta));
                     return coeff.multiply(prevMap.get(key));
                 }
                 else { // Table doesn't contain this term
                     System.out.format("Finding N(%dh + %df, %d, %s, %s)\n",
                         i, j, g, MyF.str(alpha), MyF.str(beta));
-                    System.out.format("N(%dh + %df, %d, %s, %s) wasn't found.\n", 
+                    System.out.format("N(%dh + %df, %d, %s, %s) not found.\n",
                         i - 1, j + n, gP, MyF.str(aP), MyF.str(bP));
                 }              
             }
