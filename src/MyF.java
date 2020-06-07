@@ -11,14 +11,15 @@ public class MyF
 {
     /**
      * toVar method converts the input array (a0, a1, ...) to a monomial 
-     * "b^(a0) c^(a1) d^(a2)...". 
+     * "b^(a1) c^(a2) d^(a3)...". 
      * The elements of the input array is the power of b, c, d,...,z.  
-     * For example, if arr = [1, 3, -1, 14] then output is "b^1 c^3 e^(14)"
-     * (with space between each monomial). If the power is greater than nine
-     * then parenthesis will be added. Negative elements will be ignored.  
+     * If the power is greater than nine
+     * then parenthesis will be added. Negative elements will be ignored. 
+     * For example, if arr = [2, 1, 3, -1, 14] then output is "b^1 c^3 e^(14)"
+     * (with space between each monomial).  
      * Only the first 25 elements will be used.
-     * @param arr A byte array 
-     * @return The string of correponding monomial.
+     * @param arr A byte array {a0, a1, a2...}
+     * @return The correponding monomial "b^(a1) c^(a2) d^(a3)...".
      */
     public static String toVar(byte[] arr) {
         String ans = "";
@@ -36,8 +37,8 @@ public class MyF
     }
     /** 
      * Return the string representation of an array (seperated by "," ). 
-     * @param arr A byte array
-     * @return String
+     * @param arr Any byte array
+     * @return The string form of input array (seperated by "," ).
      */   
     public static String str(byte[] arr) {
         return Arrays.toString(arr).replaceAll("\\s", "");
