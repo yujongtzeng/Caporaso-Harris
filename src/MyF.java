@@ -17,7 +17,7 @@ public class MyF
      * then parenthesis will be added. Negative elements will be ignored. 
      * For example, if arr = [2, 1, 3, -1, 14] then output is "b^1 c^3 e^(14)"
      * (with space between each monomial).  
-     * Only the first 25 elements will be used.
+     * Only the first 26 elements will be used.
      * @param arr A byte array {a0, a1, a2...}
      * @return The correponding monomial "b^(a1) c^(a2) d^(a3)...".
      */
