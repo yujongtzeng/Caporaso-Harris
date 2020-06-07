@@ -1,11 +1,11 @@
 import java.util.Arrays;
 import java.math.BigInteger; 
 /**
- * MyF is a class which contains short static  functions. 
+ * MyF is a class which contains short static functions. 
  *
  * @author Yu-jong Tzeng
- * @version 2.0
- * @since May 18, 2020.
+ * @version 4.0
+ * @since 2.0
  */
 public class MyF 
 {
@@ -46,8 +46,8 @@ public class MyF
         return Arrays.toString(arr).replaceAll("\\s", "");
     }*/   
     /**
-     * Return the arithmetic genus of the curve class O(a,b), which is 
-     * (a - 1)*(b - 1). 
+     * Return the arithmetic genus of the curve class O(a,b) on P^1*P^1, 
+     * which is (a - 1)*(b - 1). 
      * @param a An integer
      * @param b An integer
      * @return The integer (a - 1)*(b - 1) 
@@ -56,7 +56,7 @@ public class MyF
         return (a - 1) * (b - 1);
     }
     /**
-     * Compute the sum of two long integers.
+     * Return the sum of two long integers.
      * @param a A long integer
      * @param b A long integer
      * @return a + b as a BigInteger
@@ -65,7 +65,7 @@ public class MyF
         return BigInteger.valueOf(a).add(BigInteger.valueOf(b));       
     } 
     /**
-     * Compute the sum of a BigInteger and a long integer.
+     * Return the sum of a BigInteger and a long integer.
      * @param a A BitInteger
      * @param b A long integer
      * @return a + b as a BigInteger
@@ -74,7 +74,7 @@ public class MyF
         return a.add(BigInteger.valueOf(b));       
     } 
     /**
-     * Compute the sum of a long integer and a BigInteger.
+     * Return the sum of a long integer and a BigInteger.
      * @param a A long integer
      * @param b A BigInteger
      * @return a + b as a BigInteger
@@ -88,7 +88,7 @@ public class MyF
         return ans.multiply(BigInteger.valueOf(d));       
     }*/
     /**
-     * Compute the product of all inputs. 
+     * Return the product of all inputs. 
      * @param a A long integer
      * @param b A long integer
      * @param c A long integer
