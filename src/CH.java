@@ -24,9 +24,9 @@ import java.math.BigInteger;
  * (d-1)*(d-2)/2 - r)
  * which satisfy tangency conditions (alpha, beta) with a given line for  
  * <br>
- * 1) d = the biggest 5 positive integers less or equal to maximal degree 
- *    (5 is the default number and can be changed by modifying the instance 
- *    variable printLast), <br>  
+ * 1) d = 1, 2, ...,maximal degree. 
+ * To limit the range, modify the variable printLast to only print  
+ * the top printLast different degrees. <br />
  * 2) all nonnegative integers r less or equal to max number of nodes, <br>   
  * 3) all valid tangency conditions alpha and beta 
  *    (valid := satisfy I(alpha)+I(beta) = d). 
@@ -58,16 +58,16 @@ import java.math.BigInteger;
  * <p>
  * 
  * Notes on algorithm: <br>
- * This class and F0Table use the same algorithm. 
+ * This class and HirTable use the same algorithm. 
  * <p>
  * alpha and beta are stored by byte arrays. The length of them (and 
- * variations) are of fixed length d. The bound is from the maxLength of 
+ * variations) are of fixed length d. The bound is from the max length of 
  * alpha, alpha', beta, beta' <= d. 
  * All methods in arrayOp will check if the length of inputs equals d. 
  * 
  * @author Yu-jong Tzeng
- * @version 3.1
- * @since May 21, 2020.
+ * @version 4.0
+ * @since 1.0.
  */
 
 public class CH {
@@ -93,7 +93,7 @@ public class CH {
     private HashMap<ArrayList<Byte>, BigInteger> curDump;   
     private Partitions parArr; 
     /**
-    * The constructor of the class.
+    * The constructor of the class. Will do setups before actual computation.
     * @param deg The maximal degree of the curves. 
     * @param maxNode The maximal number of nodes of the curves.
     */
@@ -102,7 +102,7 @@ public class CH {
         this.maxNode = maxNode; 
         arrOp = new ArrayOp(deg);
         parArr = new Partitions(deg);
-        printLast = 5;
+        printLast = deg;
         wDeg = 10;        
         prevMap = new HashMap<ArrayList<Byte>, BigInteger>();                
         curDump = new HashMap<ArrayList<Byte>, BigInteger>();
