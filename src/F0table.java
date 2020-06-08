@@ -252,7 +252,7 @@ public class F0table {
         }
         // the second term
         if (aa > 0) {  
-            int bdj = Math.max(0, g - MyF.g_a(aa -1, b) + arrOp.sum(beta) + 1);
+            int bdj = Math.max(0, g - MyF.g_a(aa - 1, b) + arrOp.sum(beta) + 1);
             for (int j = bdj; j <= b; j++) {
                 for (byte[] bP : parArr.get(j)) {
                     for (byte[] aP : parArr.get(b - j)) {

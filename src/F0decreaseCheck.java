@@ -91,14 +91,14 @@ public class F0decreaseCheck {
         for (int i = 0; i <= a; i++) {
             System.out.println("Computing a = " + i);
             prevMap = curMap;
-            curMap = new HashMap<ArrayList<Byte>, BigInteger>();                                      
+            curMap = new HashMap<ArrayList<Byte>, BigInteger>();
             // Compute N and put in the table           
-            for (int g = MyF.g_a(i, b) - gdiff; g <= MyF.g_a(i, b); g++) {                
+            for (int g = MyF.g_a(i, b) - gdiff; g <= MyF.g_a(i, b); g++) {
                 for (int j = 0; j <= b; j++) {
                     for (byte[] beta : parArr.get(j)) {
                         BigInteger lastN = BigInteger.valueOf(-1);
                         //System.out.print(MyF.str(beta));
-                        for (byte[] alpha : parArr.get(b - j)) {                                
+                        for (byte[] alpha : parArr.get(b - j)) {
                             BigInteger ansN =  N(i, g, alpha, beta);
                             curMap.put(Key.make(g, alpha, beta), ansN);
                             if (lastN.compareTo(ansN) < 0 
