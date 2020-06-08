@@ -138,13 +138,13 @@ public class CH {
         for (int d = 1; d <= deg; d++) {
             System.out.println("Computing d = " + d);
             prevMap = curSave;
-            curSave = new HashMap<ArrayList<Byte>, BigInteger>();  
-            curDump = new HashMap<ArrayList<Byte>, BigInteger>();   
+            curSave = new HashMap<ArrayList<Byte>, BigInteger>();   
             if (d <= deg - printLast) {
-                // Only compute N and put in the dictionary
-                // cur is a working dictionary. First is curDump then curSave
-                HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
+                // Only compute N and put in the dictionary               
                 for (int r = 0; r <= maxNode; r++) {
+                    curDump = new HashMap<ArrayList<Byte>, BigInteger>(); 
+                    // cur is working dictionary. First = curDump then curSave
+                    HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
                     // If j > maxNode then next beta will be negative. 
                     // by d - 1 - j = I(beta') >= |beta| - r + d - 1 so these
                     // numbers will not be used again for bigger degree.

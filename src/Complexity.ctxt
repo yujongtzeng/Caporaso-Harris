@@ -1,20 +1,20 @@
 #BlueJ class context
 comment0.target=Complexity
-comment0.text=\n\ The\ Complexity\ class\ is\ a\ simple\ tool\ to\ compute\ the\ true\ and\ estimated\ \n\ time\ and\ space\ complexity\ of\ the\ CH\ class.\ \n\ <p>\n\ @author\ Yu-jong\ Tzeng\n\ @version\ 2.1\n\ @since\ May.\ 21,\ 2020.\n
+comment0.text=\n\ The\ Complexity\ class\ is\ a\ simple\ tool\ to\ compute\ the\ true\ and\ estimated\ \n\ time\ and\ space\ complexity\ of\ the\ CH\ class.\ \n\ The\ true\ complexity\ is\ stored\ by\ static\ arrays\ and\ the\ estimated\ complexity\n\ can\ be\ computed\ by\ methods.\ \n\ Those\ arrays\ have\ a\ fixed\ length\ 50.\ It\ can\ be\ enlarged\ by\ adding\ more\ \n\ partition\ numbers\ in\ the\ code.\ \n\ <p>\n\ @author\ Yu-jong\ Tzeng\n\ @version\ 4.0\n\ @since\ 3.1\n
 comment1.params=
 comment1.target=Complexity()
 comment1.text=\n\ Construct\ the\ complexity\ class\ and\ declare\ instance\ variables.\ \n
 comment2.params=deg
 comment2.target=void\ calculate(int)
-comment2.text=\n\ Compute\ the\ instance\ variables\ to\ the\ given\ degree.\n\ @param\ deg\ The\ max\ degree.\ \ \n
+comment2.text=\n\ Compute\ the\ instance\ variables\ to\ the\ given\ degree.\ \n\ @param\ deg\ The\ max\ degree\ (required\ to\ be\ <\=\ 50).\ \ \n
 comment3.params=d\ r\ alpha\ beta
 comment3.target=void\ N(int,\ int,\ byte[],\ byte[])
 comment3.text=\n\ Compute\ the\ numbr\ of\ operations\ for\ the\ N\ method\ in\ CH\ by\ simulation.\ \n
 comment4.params=deg
-comment4.target=double\ eP(int)
+comment4.target=double\ ePar(int)
 comment4.text=\n\ @param\ deg\ The\ maximal\ degree.\ \n\ @return\ the\ estimated\ partition\ function\ for\ degree\ deg.\n
 comment5.params=deg
-comment5.target=double\ eNum(int)
+comment5.target=double\ eCh(int)
 comment5.text=\n\ @param\ deg\ The\ maximal\ degree.\n\ @return\ the\ estimated\ number\ of\ CH\ invariants\ for\ fixed\ deg,\ delta.\ \ \n
 comment6.params=deg
 comment6.target=double\ eSpace(int)
@@ -24,5 +24,5 @@ comment7.target=double\ eTime(int)
 comment7.text=\n\ @param\ deg\ The\ maximal\ degree.\n\ @return\ the\ estimated\ running\ time\ for\ the\ CH\ class\ for\ degree\ deg.\n
 comment8.params=deg
 comment8.target=double\ naive(int)
-comment8.text=\n\ @param\ deg\ The\ maximal\ degree.\n\ @return\ the\ estimated\ running\ time\ for\ naive\ CH\ formula\ for\ degree\ deg\n\ and\ delta\ \=\ 4.\n
+comment8.text=\n\ @param\ deg\ The\ maximal\ degree.\n\ @return\ the\ estimated\ running\ time\ for\ naive\ CH\ formula\ for\ degree\ deg\n\ and\ maxNode\ \=\ 4.\n
 numComments=9
