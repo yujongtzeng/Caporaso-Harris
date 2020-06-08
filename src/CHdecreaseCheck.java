@@ -10,10 +10,10 @@ import java.math.BigInteger;
  * P^2 which satisfy tangency conditions (alpha, beta) with a fixed 
  * line. 
  * CHdecreaseCheck is a program which checks that for fixed d, r, beta, 
- * N(a, b, g, alpha, beta) is a non-increasing sequence in lexicographic 
+ * whether N(d, r, alpha, beta) is a non-increasing sequence in lexicographic 
  * order of alpha. 
  * If not, the counterexample will be printed out on the screen as
- * "N(a, b, g, alpha, beta) > last" where last is the number right before. 
+ * "N(d, r, alpha, beta) > last" where last is the number right before. 
  * </p>
  * 
  * deg: the maximal degrees of the curve <br>
@@ -24,8 +24,8 @@ import java.math.BigInteger;
  * 0 <= r <= maxNode, and all valid alpha and beta. 
  * 
  * @author Yu-jong Tzeng
- * @version 2.0
- * @since May 22, 2020.
+ * @version 4.0
+ * @since 2.0.
  */
 public class CHdecreaseCheck {
     private static int deg;
@@ -37,8 +37,8 @@ public class CHdecreaseCheck {
 
     /**
     * The constructor of the class.
-    * @param deg The maximal degree of the curve. 
-    * @param maxNode The maximal number of nodes of the curves in query.
+    * @param deg The maximal degree of the curves. 
+    * @param maxNode The maximal number of nodes of the curves.
     */
     public CHdecreaseCheck (int deg, int maxNode) {
         this.deg = deg;
@@ -66,7 +66,7 @@ public class CHdecreaseCheck {
         System.out.println("Enter the max number of nodes:");        
         System.out.println("maxNode = ");
         int inputMaxNode = reader.nextInt();        
-        System.out.format("If not, the increasing part will be printed out.");
+        System.out.println("If not, the increasing part will be printed out.");
         reader.close();
                  
         CHdecreaseCheck check = new CHdecreaseCheck(inputdeg, inputMaxNode);

@@ -9,8 +9,8 @@ import java.math.BigInteger;
  * on P^1*P^1 which satisfy tangency conditions (alpha, beta) with a fixed 
  * line in |O(1,0)|. 
  * F0decreaseCheck is a program to check that for fixed a, b, g, beta, 
- * N(a, b, g, alpha, beta), is a non-increasing sequence in lexicographic 
- * order of alpha. 
+ * whether N(a, b, g, alpha, beta), is a non-increasing sequence in 
+ * lexicographic order of alpha. 
  * If not, the counterexample will be printed out on the screen in the form
  * "N(a, b, g, alpha, beta) > last" where last is the number right before. 
  * </p>
@@ -25,8 +25,8 @@ import java.math.BigInteger;
  * and all valid alpha and beta. 
  * 
  * @author Yu-jong Tzeng
- * @version 3.0
- * @since May 22, 2020.
+ * @version 4.0
+ * @since 2.0
  */
 public class F0decreaseCheck {  
     private static int a;
@@ -39,8 +39,8 @@ public class F0decreaseCheck {
 
     /**
      * The constructor of the class.
-     * @param a the number of ample class h in the curve class O(a,b)
-     * @param b the number of fiber class h in the curve class O(a,b)
+     * @param a the maximal curve bidegree is O(a, b)
+     * @param b the second bidegree is b.
      * @param gdiff the max difference between arithmetic genus and geometric 
      * genus of the curve we'll compute
      */
@@ -62,10 +62,10 @@ public class F0decreaseCheck {
     public static void main(String[] args)
     {        
         Scanner reader = new Scanner(System.in);  // Reading from System.in
-        System.out.println("This program computes the number of singular"
-            + "curves in |O(a,b)| on P^1*P^1");
-        System.out.println("satisfy tangency conditions with a given line"
-                + " in |O(1,0)|.");
+        System.out.println("This program will check whether the number of " 
+                    + "nodal curves on P^1*P^1 of fixed");
+        System.out.println("bidegree and nodes and beta is non-increasing " 
+            + "in lexicographic order of alpha.");
         System.out.println("Enter a:");        
         System.out.println("a = ");
         int aIn = reader.nextInt();
@@ -76,8 +76,7 @@ public class F0decreaseCheck {
             + "- geometric genus):");        
         System.out.println("gdiff = ");
         int gIn = reader.nextInt();        
-        System.out.format("The output will be written in the directory" + 
-                           "../output/F0\n");
+        System.out.println("If not, the increasing part will be printed out.");
         reader.close();
                  
         F0decreaseCheck check = new F0decreaseCheck(aIn, bIn, gIn);
