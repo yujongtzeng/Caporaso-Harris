@@ -138,11 +138,10 @@ public class CH {
         for (int d = 1; d <= deg; d++) {
             System.out.println("Computing d = " + d);
             prevMap = curSave;
-            curSave = new HashMap<ArrayList<Byte>, BigInteger>();   
+            curSave.clear();   
             if (d <= deg - printLast) {
                 // Only compute N and put in the dictionary               
                 for (int r = 0; r <= maxNode; r++) {
-                    curDump = new HashMap<ArrayList<Byte>, BigInteger>(); 
                     // cur is working dictionary. First = curDump then curSave
                     HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
                     // If j > maxNode then next beta will be negative. 
@@ -157,6 +156,8 @@ public class CH {
                             }
                         }
                     }
+                    System.out.format("Clean: (d,r) = (%d,%d)\n", d, r);
+                    curDump = new HashMap<ArrayList<Byte>, BigInteger>(); 
                 }  
             }
             else {
@@ -186,6 +187,7 @@ public class CH {
             genFun.getParentFile().mkdirs();
             PrintWriter num = new PrintWriter(outputfile, "UTF-8");
             PrintWriter gen = new PrintWriter(genFun, "UTF-8");
+            curDump = new HashMap<ArrayList<Byte>, BigInteger>(); 
             HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
             for (int j = d; j >= 0; j--) {
                 if (j <= maxNode) { cur = curSave; }
@@ -207,6 +209,8 @@ public class CH {
             }    
             num.close();
             gen.close();
+            System.out.format("Clean: (d,r) = (%d,%d)\n", d, r);
+            curDump = new HashMap<ArrayList<Byte>, BigInteger>();
         } 
         catch (IOException e) {
             System.out.println("There is an error in I/O.");
