@@ -138,7 +138,7 @@ public class CH {
         for (int d = 1; d <= deg; d++) {
             System.out.println("Computing d = " + d);
             prevMap = curSave;
-            curSave.clear();   
+            curSave = new HashMap<ArrayList<Byte>, BigInteger>();  
             if (d <= deg - printLast) {
                 // Only compute N and put in the dictionary               
                 for (int r = 0; r <= maxNode; r++) {
@@ -157,7 +157,7 @@ public class CH {
                         }
                     }
                     System.out.format("Clean: (d,r) = (%d,%d)\n", d, r);
-                    curDump = new HashMap<ArrayList<Byte>, BigInteger>(); 
+                    curDump.clear(); 
                 }  
             }
             else {
@@ -166,8 +166,8 @@ public class CH {
                     // first term has the same d, r, data in curDump and 
                     // curSave can be thrown away. 
                     if (d == deg) {
-                        curDump = new HashMap<ArrayList<Byte>, BigInteger>();
-                        curSave = new HashMap<ArrayList<Byte>, BigInteger>();
+                        curDump.clear();
+                        curSave.clear();
                     }
                     output(d, r);     
                 }    
@@ -210,7 +210,7 @@ public class CH {
             num.close();
             gen.close();
             System.out.format("Clean: (d,r) = (%d,%d)\n", d, r);
-            curDump = new HashMap<ArrayList<Byte>, BigInteger>();
+            curDump.clear();
         } 
         catch (IOException e) {
             System.out.println("There is an error in I/O.");
