@@ -116,9 +116,9 @@ public class Test
             }        
             if (ans.hasNextLine() || test.hasNextLine()) {
                 System.out.print("Different number of lines"); 
-                return true;    
-            }       
-        } 
+                return true;   
+            } 
+        }
         catch (IOException e) {
             System.out.println("There is an error in I/O for Test.java.");
             return true;

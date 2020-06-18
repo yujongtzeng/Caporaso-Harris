@@ -156,7 +156,6 @@ public class CH {
                             }
                         }
                     }
-                    System.out.format("Clean: (d,r) = (%d,%d)\n", d, r);
                     curDump.clear(); 
                 }  
             }
@@ -209,7 +208,6 @@ public class CH {
             }    
             num.close();
             gen.close();
-            System.out.format("Clean: (d,r) = (%d,%d)\n", d, r);
             curDump.clear();
         } 
         catch (IOException e) {
