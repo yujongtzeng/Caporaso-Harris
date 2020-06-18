@@ -31,6 +31,8 @@ $ java HirTable
 
 The program will show you instructions to enter inputs and the location for output. It will print the number of nodal curves as well as their first terms for generating functions in the output files. 
 
+### Sample output
+Sample output files of large degrees on the projective plane and the product of projective lines are in sample_output directory. Various output of CH.java and HirTable.java is in src/testFiles.  
 
 ### API Reference
 
