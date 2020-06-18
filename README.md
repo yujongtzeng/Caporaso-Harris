@@ -10,20 +10,27 @@ We improved the naive recursive algorithm by:
 * dynamic approach algorithms
 * letting users to choose the range of degrees and nodes
 * testing pre-generated partitions alpha' and beta' for the second term instead of generating valid alpha' and beta' every time
-* avoiding unnecessary computations in the second term in recursive formulae
+* greatly improving the speed by limiting the range of computations in the second term in recursive formulae
 
 ### Installing
 No installation is needed.
 
 ### How to use
+First change directory to src/
+
 For computation on the projective plane,
 ```
 $ javac CH.java
 $ java CH
 ```
+For computation on Hirzebruch surfaces F_n for any n,
+```
+$ javac HirTable.java
+$ java HirTable
+```
+
 The program will show you instructions to enter inputs and the location for output. It will print the number of nodal curves as well as their first terms for generating functions in the output files. 
 
-The CH class is for computations on the projectives planes. F0Table and HirTable are for the product of two projece lines and any Hirzebruch surfaces respectively. F0Table and HirTable can be run in the same way. 
 
 ### API Reference
 
@@ -31,14 +38,14 @@ The documentation is under [doc](/doc) directory.
 
 ### Tests
 
-Sample output files are provided under [sample output](/sample%20output) directory. If they match with your output file it can be almost sure your program is working fine.
+Run test.java under src directory. It compares the output with pre-generated files. Those test files contains but not limited all numbers on Caporaso-Harris and Vakil's paper.
 
 ### Technologies
 Java 8
 
 ### Versioning
 
-Version 3. 
+Version 4. 
 
 ### Authors
 
