@@ -159,7 +159,7 @@ public class HirTable {
                 // cur is a working dictionary. First is curDump then curSave
                 HashMap<ArrayList<Byte>, BigInteger> cur = curDump;
                 for (int r = 0; r <= gdiff; r++) {
-                    int g = g_a(n, i, j) - r; 
+                    int g = MyF.g_a(n, i, j) - r; 
                     for (int k = j; k >= 0; k--) {
                         // If k > gdiff - r then next beta will be negative. 
                         // because |next beta| = r - r' - k so these
@@ -194,7 +194,7 @@ public class HirTable {
      */
     private void output(int i, int r) {
         int j = b + n * (a - i); 
-        int g = g_a(n, i, j) - r;
+        int g = MyF.g_a(n, i, j) - r;
         try {
             String fname = String.format("F%d/%dh+%df_g=%d.txt", n, i, j, g);
             File outputfile = new File("../output/Hir/" + fname);  
@@ -244,7 +244,7 @@ public class HirTable {
             System.out.format("The number of h can't be negative: " + i);
             return BigInteger.ZERO;
         }
-        if (g > g_a(n, i, j)) {
+        if (g > MyF.g_a(n, i, j)) {
             System.out.format("The number of nodes can't be negative: " + g);
             return BigInteger.ZERO;
         }
@@ -270,9 +270,9 @@ public class HirTable {
         // the second term
         if (i > 0) {  
             // |\beta'| = g - g' + |beta| + 1
-            int bdj = g - g_a(n, i - 1, j + n) + arrOp.sum(beta) + 1;
+            int bdj = g - MyF.g_a(n, i - 1, j + n) + arrOp.sum(beta) + 1;
             //System.out.format("bound = [%d, j + n], %d- %d + %d + %d\n", 
-            //    bdj, g,  g_a(n, i -1, j + n), arrOp.sum(beta), 1);
+            //    bdj, g,  MyF.g_a(n, i -1, j + n), arrOp.sum(beta), 1);
             for (int k = Math.max(0, bdj); k <= j + n; k++) {
                 for (byte[] bP : parArr.get(k)) {
                     for (byte[] aP : parArr.get(j + n - k)) {       
@@ -323,7 +323,7 @@ public class HirTable {
             int gP = g - arrOp.sum(gamma) + 1;
             // no need to check gP >= MyF.g_a(aa - 1, b) - gdiff --
             // it's proven.
-            if (gP <= g_a(n, i - 1, j + n)) {                
+            if (gP <= MyF.g_a(n, i - 1, j + n)) {                
                 ArrayList<Byte> key = Key.make(gP, aP, bP);                
                 if (prevMap.containsKey(key)) {
                     BigInteger coeff = MyF.prod(arrOp.J(gamma),  
@@ -341,10 +341,4 @@ public class HirTable {
         //System.out.println("Nope");
         return BigInteger.ZERO;        
     } 
-    /**
-     * Compute the arithmetic genus of curve class ih + jf on F_m.
-     */
-    private static int g_a(int m, int i, int j) {  
-        return (i - 1) * (j - 1) + i * (i - 1) * m / 2;
-    }
 }    

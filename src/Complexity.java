@@ -17,7 +17,7 @@ public class Complexity
     public static int[] parN;
     private static int length;
     /** 
-     * chN[d] is the number of Caparaso-Harris invariants N(d,r,alpha, beta)
+     * chN[d] is the number of Caparaso-Harris invariants N(d, r, alpha, beta)
      * for any fixed r, which is the number of (alpha, beta) satisfying 
      * I(alpha) + I(beta) = d.
      */
@@ -69,20 +69,20 @@ public class Complexity
                 chN[i] += parN[j] * parN[i - j];
             }
         }
-        //calculate space
+        //calculate space <=  curSave[i-1] + curSave[i] + chN[i]  
         space[0] = 0;
         long[] curSave = new long[length];
         curSave[0] = 0;
         for (int i = 1; i < deg; i++) {
             curSave[i] = 0;
-            for (int j = maxNode; j >= 0; j--) {
+            for (int j = Math.min(i, maxNode); j >= 0; j--) {
                 curSave[i] += parN[j] * parN[i - j];
             }
         }                         
         for (int i = 1; i <= deg; i++) {
             // state i: max: all CH inv for current r
             // stage i - 1: curSave
-            space[i] = chN[i] + curSave[i - 1];
+            space[i] = chN[i] + curSave[i] + curSave[i - 1];
         }
         //calculate time
         time[0] = 0;

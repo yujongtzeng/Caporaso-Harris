@@ -82,7 +82,7 @@ public class Test
         for (int i = 0; i <= a; i++) {
             int j = b + n * (a - i);
             for (int r = 0; r <= maxNode; r++) {
-                int g = g_a(n, i, j) - r;
+                int g = MyF.g_a(n, i, j) - r;
                 String fname = String.format("%dh+%df_g=%d.txt", i, j, g);
                 String fn = "F" + n + "/";
                 //System.out.println(fname);
@@ -124,11 +124,5 @@ public class Test
             return true;
         }
         return false;
-    }
-    /**
-     * Compute the arithmetic genus of curve class ih + jf on F_m.
-     */
-    private static int g_a(int m, int i, int j) {  
-        return (i - 1) * (j - 1) + i * (i - 1) * m / 2;
     }
 }
