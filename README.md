@@ -38,7 +38,7 @@ The documentation is under [doc](/doc) directory.
 
 ### Tests
 
-Run test.java under src directory. It compares the output with pre-generated files. Those test files contains but not limited all numbers on Caporaso-Harris and Vakil's paper.
+Run test.java under src directory. It compares the output with pre-generated files. Those test files contains but not limited all numbers on Caporaso-Harris and Vakil's papers.
 
 ### Technologies
 Java 8
@@ -53,5 +53,5 @@ Version 4.
 
 ### License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see  [LICENSE](LICENSE) for more details
 
