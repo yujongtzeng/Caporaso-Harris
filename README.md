@@ -36,7 +36,7 @@ Sample output files of large degrees on the projective plane and the product of 
 
 ### API Reference
 
-The documentation is under [doc](/doc) directory.
+The documentation is under [src/doc](src/doc) directory.
 
 ### Tests
 
