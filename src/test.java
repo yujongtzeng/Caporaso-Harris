@@ -86,7 +86,8 @@ public class Test
                 String fname = String.format("%dh+%df_g=%d.txt", i, j, g);
                 String fn = "F" + n + "/";
                 //System.out.println(fname);
-                String dir = String.format("F%d(%d, %d, %d)/", n, a, b, maxNode);
+                String dir = String.format("F%d(%d, %d, %d)/", n, a, b, 
+                                            maxNode);
                 //System.out.println("testFiles/" +  dir + fname);
                 //System.out.println("../output/Hir/F"+ n + "/" + fname);
                 Boolean diffL = compare(new File("testFiles/" +  dir 

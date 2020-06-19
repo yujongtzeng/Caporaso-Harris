@@ -57,8 +57,12 @@ public class MyF
         return (a - 1) * (b - 1);
     }
     /**
-     * Return the arithmetic genus of curve class ih + jf on Hirzebruch 
+     * Return the arithmetic genus of curve class ih + jf on the Hirzebruch 
      * surface F_m.
+     * @param m A nonnegative integer
+     * @param i An integer
+     * @param j An integer
+     * @return The arithmetic genus (i - 1) * (j - 1) + i * (i - 1) * m / 2.
      */
     public static int g_a(int m, int i, int j) {  
         return (i - 1) * (j - 1) + i * (i - 1) * m / 2;
