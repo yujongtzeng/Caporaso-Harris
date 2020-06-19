@@ -101,7 +101,7 @@ public class HirTable {
         maxLength = b + a * n;
         arrOp = new ArrayOp(maxLength);  
         parArr = new Partitions(maxLength);
-        printLast = 5;
+        printLast = a + 1;
         wDeg = 10;
         prevMap = new HashMap<ArrayList<Byte>, BigInteger>();                
         curDump = new HashMap<ArrayList<Byte>, BigInteger>();
